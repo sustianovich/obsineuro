@@ -1,0 +1,84 @@
+name: Calidad
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pruebas:
+    name: Pruebas y evaluación
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Preparar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Pruebas unitarias
+        run: python -m pytest tests/ -q
+
+      - name: Parser de eventos SSE
+        run: node tests/test_sse_parser.mjs
+
+      # Un getElementById que devuelve null no falla al cargar: falla
+      # cuando el usuario pulsa algo. Se comprueba en un DOM real.
+      - name: Interfaz en DOM real
+        run: |
+          npm install --no-save jsdom
+          node tests/test_ui_dom.mjs
+
+      # No necesita Ollama ni GPU: levanta el doble de pruebas. Detecta
+      # regresiones en filtros, fusión, expansión de enlaces y
+      # abstención. La calidad semántica real se mide aparte, con el
+      # modelo de verdad y el vault del cliente.
+      - name: Evaluación del conjunto dorado
+        run: python -m scripts.run_eval_ci
+
+      - name: Guardar informe de evaluación
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: informe-evaluacion
+          path: evaluations/reports/
+          if-no-files-found: ignore
+
+  estilo:
+    name: Estilo y sintaxis
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Compilar todo el Python
+        run: python -m compileall -q app scripts tests
+
+      - name: Sintaxis del frontend
+        run: node --check app/static/app.js

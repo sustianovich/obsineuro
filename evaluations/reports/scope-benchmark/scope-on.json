@@ -1,0 +1,932 @@
+{
+  "generated_at": "2026-07-26T21:33:31.261757+00:00",
+  "configuration": {
+    "embedding_model": "nomic-embed-text",
+    "chat_model": null,
+    "top_k": 6,
+    "min_similarity": 0.3,
+    "retrieval_mode": "hybrid",
+    "hybrid_rrf_k": 60,
+    "hybrid_semantic_weight": 1.0,
+    "hybrid_lexical_weight": 0.8,
+    "answers_generated": false,
+    "verification_enabled": false,
+    "scope_enabled": true,
+    "scope_context_tokens": 4096
+  },
+  "metrics": {
+    "cases": 16,
+    "answerable_cases": 16,
+    "abstention_cases": 0,
+    "retrieval_exact_hit_rate": 1.0,
+    "document_recall": 1.0,
+    "mean_reciprocal_rank": 0.9375,
+    "abstention_accuracy": 0.0,
+    "answer_term_coverage": null,
+    "mean_scope_seconds": 0.5302955625,
+    "mean_retrieval_seconds": 0.0386749375,
+    "mean_total_seconds": 0.56899325
+  },
+  "results": [
+    {
+      "id": "PDPCM-01-ficha-programa",
+      "question": "Cual es la prueba de cribado, su periodicidad y la modalidad de lectura del programa?",
+      "expected_paths": [
+        "01_programa/10_ficha_del_programa.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "01_programa/10_ficha_del_programa.md",
+        "06_indicadores/kpi/kpi_06.md",
+        "06_indicadores/kpi/kpi_06.md",
+        "04_roles/roles/rol_cp.md",
+        "04_roles/roles/rol_cp.md",
+        "01_programa/14_evolucion_por_fases.md",
+        "01_programa/15_rango_de_edad_punto_abierto.md",
+        "03_procesos/nodos/nodo_03.md",
+        "03_procesos/nodos/nodo_04.md"
+      ],
+      "scores": [
+        0.7907,
+        0.602,
+        0.5268,
+        0.5382,
+        0.5328,
+        0.6015,
+        0.6721,
+        0.6721,
+        0.6721
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 848,
+        "completion_tokens": 8,
+        "total_tokens": 856,
+        "usage_percent": 20.9,
+        "estimated": false,
+        "paths": [
+          "03_Procesos/Nodos"
+        ]
+      },
+      "scope_paths": [
+        "03_Procesos/Nodos"
+      ],
+      "scope_seconds": 0.515051,
+      "retrieval_seconds": 0.038006,
+      "total_seconds": 0.553078,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "PDPCM-02-rango-edad",
+      "question": "Que punto de auditoria existe sobre los distintos rangos de edad y por que afecta a los indicadores?",
+      "expected_paths": [
+        "01_programa/15_rango_de_edad_punto_abierto.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "01_programa/15_rango_de_edad_punto_abierto.md",
+        "01_programa/15_rango_de_edad_punto_abierto.md",
+        "07_auditoria/75_puntos_abiertos.md",
+        "06_indicadores/63_puntos_abiertos_de_indicadores.md",
+        "01_programa/15_rango_de_edad_punto_abierto.md",
+        "06_indicadores/63_puntos_abiertos_de_indicadores.md",
+        "03_procesos/nodos/nodo_02.md",
+        "01_programa/13_cascada_del_programa.md",
+        "01_programa/12_segmentacion_de_la_poblacion_diana.md"
+      ],
+      "scores": [
+        0.5902,
+        0.7547,
+        0.5139,
+        0.5125,
+        0.4996,
+        0.557,
+        0.5017,
+        0.5017,
+        0.5017
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 849,
+        "completion_tokens": 8,
+        "total_tokens": 857,
+        "usage_percent": 20.92,
+        "estimated": false,
+        "paths": [
+          "03_Procesos/Nodos"
+        ]
+      },
+      "scope_paths": [
+        "03_Procesos/Nodos"
+      ],
+      "scope_seconds": 0.508271,
+      "retrieval_seconds": 0.04066,
+      "total_seconds": 0.548955,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "PDPCM-03-sicc",
+      "question": "Que documento es la fuente normativa primaria para los indicadores y criterios de evaluacion?",
+      "expected_paths": [
+        "02_normativa/21_sicc_2025.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "02_normativa/20_marco_normativo.md",
+        "02_normativa/21_sicc_2025.md",
+        "02_normativa/20_marco_normativo.md",
+        "06_indicadores/kpi/kpi_03.md",
+        "02_normativa/21_sicc_2025.md",
+        "06_indicadores/kpi/kpi_07.md",
+        "02_normativa/23_rd_1030_2006.md",
+        "02_normativa/25_referencias_documentales.md",
+        "02_normativa/22_guias_europeas_4a_edicion.md"
+      ],
+      "scores": [
+        0.6715,
+        0.851,
+        0.5304,
+        0.5917,
+        0.5878,
+        0.5867,
+        0.5708,
+        0.5708,
+        0.5708
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 0.5,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 844,
+        "completion_tokens": 9,
+        "total_tokens": 853,
+        "usage_percent": 20.83,
+        "estimated": false,
+        "paths": [
+          "06_Indicadores/KPI"
+        ]
+      },
+      "scope_paths": [
+        "06_Indicadores/KPI"
+      ],
+      "scope_seconds": 0.518388,
+      "retrieval_seconds": 0.041183,
+      "total_seconds": 0.559595,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "PDPCM-04-no-asistencia",
+      "question": "Que se registra y que acciones se contemplan tras una no asistencia a la cita?",
+      "expected_paths": [
+        "03_procesos/nodos/nodo_22.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "03_procesos/nodos/nodo_22.md",
+        "07_auditoria/76_anexo_a_mapa_de_nodos_del_informe.md",
+        "03_procesos/nodos/nodo_18.md",
+        "11_reuniones/11_indice_de_reuniones.md",
+        "03_procesos/nodos/nodo_14.md",
+        "05_sistemas/55_salud_responde.md",
+        "03_procesos/34_mapa_de_nodos.md",
+        "03_procesos/30_arquitectura_bpmn.md",
+        "03_procesos/37_equivalencia_de_numeracion.md"
+      ],
+      "scores": [
+        0.5592,
+        0.6474,
+        0.7756,
+        0.716,
+        0.7676,
+        0.6994,
+        0.4753,
+        0.4753,
+        0.5503
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 846,
+        "completion_tokens": 8,
+        "total_tokens": 854,
+        "usage_percent": 20.85,
+        "estimated": false,
+        "paths": [
+          "03_Procesos/Nodos"
+        ]
+      },
+      "scope_paths": [
+        "03_Procesos/Nodos"
+      ],
+      "scope_seconds": 0.383784,
+      "retrieval_seconds": 0.039238,
+      "total_seconds": 0.423048,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "PDPCM-05-resultado-negativo",
+      "question": "Como se comunica una lectura sin hallazgos BI-RADS 1 o 2?",
+      "expected_paths": [
+        "03_procesos/nodos/nodo_32.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "03_procesos/nodos/nodo_32.md",
+        "03_procesos/nodos/nodo_32.md",
+        "03_procesos/nodos/nodo_32.md",
+        "03_procesos/nodos/nodo_33.md",
+        "03_procesos/nodos/nodo_32b.md",
+        "03_procesos/nodos/nodo_32b.md",
+        "03_procesos/nodos/nodo_32a.md",
+        "07_auditoria/hallazgos/h-04.md",
+        "03_procesos/37_equivalencia_de_numeracion.md"
+      ],
+      "scores": [
+        0.9225,
+        0.9048,
+        0.8946,
+        0.7486,
+        0.7305,
+        0.7242,
+        0.7842,
+        0.7842,
+        0.7842
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 846,
+        "completion_tokens": 8,
+        "total_tokens": 854,
+        "usage_percent": 20.85,
+        "estimated": false,
+        "paths": [
+          "03_Procesos/Nodos"
+        ]
+      },
+      "scope_paths": [
+        "03_Procesos/Nodos"
+      ],
+      "scope_seconds": 0.502062,
+      "retrieval_seconds": 0.03833,
+      "total_seconds": 0.540413,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "PDPCM-06-doble-lectura",
+      "question": "Como se organiza la doble lectura ciega en el programa?",
+      "expected_paths": [
+        "09_clinica/91_doble_lectura_ciega.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "09_clinica/91_doble_lectura_ciega.md",
+        "09_clinica/91_doble_lectura_ciega.md",
+        "09_clinica/91_doble_lectura_ciega.md",
+        "01_programa/10_ficha_del_programa.md",
+        "03_procesos/38_doble_lectura_pendiente_de_modelar.md",
+        "03_procesos/nodos/nodo_31.md",
+        "05_sistemas/57_trazabilidad_del_dato.md",
+        "07_auditoria/74_checklist_de_auditoria_de_campo.md",
+        "06_indicadores/62_indicadores_frente_a_estandares_europeos.md"
+      ],
+      "scores": [
+        0.6815,
+        0.6853,
+        0.675,
+        0.7607,
+        0.6764,
+        0.6253,
+        0.5793,
+        0.5793,
+        0.5793
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 840,
+        "completion_tokens": 8,
+        "total_tokens": 848,
+        "usage_percent": 20.7,
+        "estimated": false,
+        "paths": [
+          "03_Procesos/Nodos"
+        ]
+      },
+      "scope_paths": [
+        "03_Procesos/Nodos"
+      ],
+      "scope_seconds": 0.509511,
+      "retrieval_seconds": 0.03783,
+      "total_seconds": 0.547362,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "PDPCM-07-contingencia-umm",
+      "question": "Que plan debe aplicarse si la unidad movil de mamografia queda inoperativa?",
+      "expected_paths": [
+        "08_operaciones/84_plan_de_contingencia_umm.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "08_operaciones/84_plan_de_contingencia_umm.md",
+        "08_operaciones/84_plan_de_contingencia_umm.md",
+        "04_roles/roles/rol_umm.md",
+        "07_auditoria/hallazgos/h-09.md",
+        "04_roles/roles/rol_umm.md",
+        "04_roles/roles/rol_umm.md",
+        "07_auditoria/riesgos/r-08.md",
+        "04_roles/roles/rol_ufm.md",
+        "08_operaciones/87_recursos_y_capacidad.md"
+      ],
+      "scores": [
+        0.6441,
+        0.6391,
+        0.5608,
+        0.5692,
+        0.5569,
+        0.5579,
+        0.5475,
+        0.5475,
+        0.5475
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 845,
+        "completion_tokens": 8,
+        "total_tokens": 853,
+        "usage_percent": 20.83,
+        "estimated": false,
+        "paths": [
+          "03_Procesos/Nodos"
+        ]
+      },
+      "scope_paths": [
+        "03_Procesos/Nodos"
+      ],
+      "scope_seconds": 0.506192,
+      "retrieval_seconds": 0.037878,
+      "total_seconds": 0.544091,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "PDPCM-08-instalacion-umm",
+      "question": "Cual es el procedimiento para el desplazamiento e instalacion de la UMM en una zona?",
+      "expected_paths": [
+        "08_operaciones/81_proc_desplazamiento_e_instalacion_umm.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "08_operaciones/81_proc_desplazamiento_e_instalacion_umm.md",
+        "08_operaciones/80_unidad_movil_de_mamografia.md",
+        "08_operaciones/81_proc_desplazamiento_e_instalacion_umm.md",
+        "08_operaciones/81_proc_desplazamiento_e_instalacion_umm.md",
+        "08_operaciones/85_zonas_basicas_de_salud.md",
+        "08_operaciones/83_proc_aviso_de_cambio_de_zona.md",
+        "03_procesos/nodos/nodo_25.md",
+        "03_procesos/nodos/nodo_25a.md",
+        "00_inicio/01_como_usar_este_vault.md"
+      ],
+      "scores": [
+        1.0,
+        0.8623,
+        0.8756,
+        0.8813,
+        0.6407,
+        0.6332,
+        0.85,
+        0.85,
+        0.85
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 848,
+        "completion_tokens": 6,
+        "total_tokens": 854,
+        "usage_percent": 20.85,
+        "estimated": false,
+        "paths": [
+          "08_Operaciones"
+        ]
+      },
+      "scope_paths": [
+        "08_Operaciones"
+      ],
+      "scope_seconds": 0.48499,
+      "retrieval_seconds": 0.041503,
+      "total_seconds": 0.526516,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "PDPCM-09-ris-pacs",
+      "question": "Que funcion tienen RIS y PACS en el circuito del programa?",
+      "expected_paths": [
+        "05_sistemas/53_ris_pacs.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "05_sistemas/53_ris_pacs.md",
+        "05_sistemas/53_ris_pacs.md",
+        "05_sistemas/53_ris_pacs.md",
+        "05_sistemas/54_hce.md",
+        "05_sistemas/50_mapa_de_sistemas.md",
+        "09_clinica/92_circuito_de_confirmacion_diagnostica.md",
+        "03_procesos/nodos/nodo_27.md",
+        "03_procesos/nodos/nodo_28.md",
+        "03_procesos/nodos/nodo_29.md"
+      ],
+      "scores": [
+        0.7229,
+        0.608,
+        0.6122,
+        0.6007,
+        0.5983,
+        0.5348,
+        0.6144,
+        0.6144,
+        0.6144
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 841,
+        "completion_tokens": 60,
+        "total_tokens": 901,
+        "usage_percent": 22.0,
+        "estimated": false,
+        "paths": [
+          "03_Procesos/Nodos",
+          "07_Auditoria/Hallazgos",
+          "06_Indicadores/KPI",
+          "04_Roles/Roles",
+          "05_Sistemas"
+        ]
+      },
+      "scope_paths": [
+        "03_Procesos/Nodos",
+        "07_Auditoria/Hallazgos",
+        "06_Indicadores/KPI",
+        "04_Roles/Roles",
+        "05_Sistemas"
+      ],
+      "scope_seconds": 0.953472,
+      "retrieval_seconds": 0.038957,
+      "total_seconds": 0.992451,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "PDPCM-10-trazabilidad",
+      "question": "Donde se documenta la trazabilidad del dato entre los sistemas del PDPCM?",
+      "expected_paths": [
+        "05_sistemas/57_trazabilidad_del_dato.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "03_procesos/nodos/nodo_31.md",
+        "05_sistemas/57_trazabilidad_del_dato.md",
+        "03_procesos/nodos/nodo_06.md",
+        "05_sistemas/50_mapa_de_sistemas.md",
+        "05_sistemas/57_trazabilidad_del_dato.md",
+        "05_sistemas/51_sistema_informatico_pdpcm.md",
+        "03_procesos/nodos/nodo_30.md",
+        "06_indicadores/kpi/kpi_06.md",
+        "06_indicadores/60_indice_de_indicadores.md"
+      ],
+      "scores": [
+        0.8034,
+        0.6226,
+        0.8028,
+        0.637,
+        0.6178,
+        0.618,
+        0.6829,
+        0.6829,
+        0.6829
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 0.5,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 845,
+        "completion_tokens": 8,
+        "total_tokens": 853,
+        "usage_percent": 20.83,
+        "estimated": false,
+        "paths": [
+          "03_Procesos/Nodos"
+        ]
+      },
+      "scope_paths": [
+        "03_Procesos/Nodos"
+      ],
+      "scope_seconds": 0.517403,
+      "retrieval_seconds": 0.035878,
+      "total_seconds": 0.553301,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "PDPCM-11-participacion",
+      "question": "Como se define la tasa de participacion del programa?",
+      "expected_paths": [
+        "06_indicadores/kpi/kpi_05.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "06_indicadores/kpi/kpi_05.md",
+        "01_programa/10_ficha_del_programa.md",
+        "06_indicadores/kpi/kpi_05.md",
+        "01_programa/14_evolucion_por_fases.md",
+        "06_indicadores/kpi/kpi_05.md",
+        "01_programa/18_objetivos_y_efectividad.md",
+        "02_normativa/21_sicc_2025.md",
+        "03_procesos/nodos/nodo_14.md",
+        "03_procesos/nodos/nodo_26.md"
+      ],
+      "scores": [
+        0.6254,
+        0.7371,
+        0.6135,
+        0.7405,
+        0.614,
+        0.6061,
+        0.5316,
+        0.5316,
+        0.5316
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 839,
+        "completion_tokens": 8,
+        "total_tokens": 847,
+        "usage_percent": 20.68,
+        "estimated": false,
+        "paths": [
+          "03_Procesos/Nodos"
+        ]
+      },
+      "scope_paths": [
+        "03_Procesos/Nodos"
+      ],
+      "scope_seconds": 0.506233,
+      "retrieval_seconds": 0.039185,
+      "total_seconds": 0.545446,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "PDPCM-12-riesgo-positivos",
+      "question": "Cual es el riesgo auditado si un positivo BI-RADS 4 o 5 no tiene seguimiento activo?",
+      "expected_paths": [
+        "07_auditoria/riesgos/r-01.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "07_auditoria/riesgos/r-01.md",
+        "07_auditoria/riesgos/r-01.md",
+        "07_auditoria/riesgos/r-01.md",
+        "07_auditoria/hallazgos/h-01.md",
+        "07_auditoria/hallazgos/h-01.md",
+        "07_auditoria/riesgos/r-07.md",
+        "03_procesos/nodos/nodo_31.md",
+        "03_procesos/nodos/nodo_33.md",
+        "03_procesos/nodos/nodo_35.md"
+      ],
+      "scores": [
+        0.8437,
+        0.8137,
+        0.8017,
+        0.715,
+        0.6164,
+        0.5876,
+        0.7171,
+        0.7171,
+        0.7171
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 851,
+        "completion_tokens": 10,
+        "total_tokens": 861,
+        "usage_percent": 21.02,
+        "estimated": false,
+        "paths": [
+          "07_Auditoria/Riesgos"
+        ]
+      },
+      "scope_paths": [
+        "07_Auditoria/Riesgos"
+      ],
+      "scope_seconds": 0.528172,
+      "retrieval_seconds": 0.039927,
+      "total_seconds": 0.568123,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "PDPCM-13-hallazgo-umm",
+      "question": "Que hallazgo de auditoria identifica la falta de plan de contingencia de la UMM unica?",
+      "expected_paths": [
+        "07_auditoria/hallazgos/h-09.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "07_auditoria/hallazgos/h-09.md",
+        "07_auditoria/hallazgos/h-09.md",
+        "07_auditoria/hallazgos/h-09.md",
+        "07_auditoria/riesgos/r-08.md",
+        "08_operaciones/84_plan_de_contingencia_umm.md",
+        "07_auditoria/riesgos/r-08.md",
+        "03_procesos/nodos/nodo_10.md",
+        "03_procesos/nodos/nodo_25.md",
+        "03_procesos/37_equivalencia_de_numeracion.md"
+      ],
+      "scores": [
+        0.6704,
+        0.7228,
+        0.6645,
+        0.6489,
+        0.6563,
+        0.6298,
+        0.5699,
+        0.5699,
+        0.5699
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 848,
+        "completion_tokens": 8,
+        "total_tokens": 856,
+        "usage_percent": 20.9,
+        "estimated": false,
+        "paths": [
+          "03_Procesos/Nodos"
+        ]
+      },
+      "scope_paths": [
+        "03_Procesos/Nodos"
+      ],
+      "scope_seconds": 0.506447,
+      "retrieval_seconds": 0.037196,
+      "total_seconds": 0.543665,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "PDPCM-14-raci",
+      "question": "Que regla basica debe cumplir la asignacion RACI de un proceso critico?",
+      "expected_paths": [
+        "04_roles/41_matriz_raci.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "04_roles/41_matriz_raci.md",
+        "04_roles/roles/rol_ap.md",
+        "04_roles/roles/rol_img.md",
+        "04_roles/roles/rol_cal.md",
+        "04_roles/41_matriz_raci.md",
+        "08_operaciones/85_zonas_basicas_de_salud.md",
+        "04_roles/roles/rol_cp.md",
+        "04_roles/roles/rol_si.md",
+        "04_roles/roles/rol_ua.md"
+      ],
+      "scores": [
+        0.7196,
+        0.5508,
+        0.5453,
+        0.5437,
+        0.4913,
+        0.4871,
+        0.6116,
+        0.6116,
+        0.6116
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 846,
+        "completion_tokens": 8,
+        "total_tokens": 854,
+        "usage_percent": 20.85,
+        "estimated": false,
+        "paths": [
+          "03_Procesos/Nodos"
+        ]
+      },
+      "scope_paths": [
+        "03_Procesos/Nodos"
+      ],
+      "scope_seconds": 0.545246,
+      "retrieval_seconds": 0.036937,
+      "total_seconds": 0.582205,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "PDPCM-15-confirmacion",
+      "question": "Cual es el circuito de confirmacion diagnostica despues de una derivacion?",
+      "expected_paths": [
+        "09_clinica/92_circuito_de_confirmacion_diagnostica.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "09_clinica/92_circuito_de_confirmacion_diagnostica.md",
+        "03_procesos/nodos/nodo_35.md",
+        "09_clinica/92_circuito_de_confirmacion_diagnostica.md",
+        "09_clinica/92_circuito_de_confirmacion_diagnostica.md",
+        "07_auditoria/riesgos/r-02.md",
+        "03_procesos/nodos/nodo_36.md",
+        "03_procesos/nodos/nodo_33.md",
+        "03_procesos/nodos/nodo_34.md",
+        "03_procesos/nodos/nodo_34a.md"
+      ],
+      "scores": [
+        0.8014,
+        0.7383,
+        0.7973,
+        0.7053,
+        0.5698,
+        0.6373,
+        0.6812,
+        0.6812,
+        0.6812
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 845,
+        "completion_tokens": 8,
+        "total_tokens": 853,
+        "usage_percent": 20.83,
+        "estimated": false,
+        "paths": [
+          "03_Procesos/Nodos"
+        ]
+      },
+      "scope_paths": [
+        "03_Procesos/Nodos"
+      ],
+      "scope_seconds": 0.516913,
+      "retrieval_seconds": 0.03898,
+      "total_seconds": 0.555915,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "PDPCM-16-checklist-auditoria",
+      "question": "Que checklist se utiliza para la auditoria de campo del programa?",
+      "expected_paths": [
+        "07_auditoria/74_checklist_de_auditoria_de_campo.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "07_auditoria/74_checklist_de_auditoria_de_campo.md",
+        "07_auditoria/74_checklist_de_auditoria_de_campo.md",
+        "07_auditoria/74_checklist_de_auditoria_de_campo.md",
+        "07_auditoria/70_informe_de_auditoria.md",
+        "03_procesos/nodos/nodo_42.md",
+        "09_clinica/91_doble_lectura_ciega.md",
+        "03_procesos/nodos/nodo_31.md",
+        "03_procesos/nodos/nodo_33.md",
+        "03_procesos/nodos/nodo_41.md"
+      ],
+      "scores": [
+        0.6185,
+        0.6174,
+        0.6037,
+        0.5818,
+        0.5801,
+        0.581,
+        0.5257,
+        0.5257,
+        0.5257
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "scope_metrics": {
+        "status": "completed",
+        "context_window_tokens": 4096,
+        "prompt_tokens": 841,
+        "completion_tokens": 4,
+        "total_tokens": 845,
+        "usage_percent": 20.63,
+        "estimated": false,
+        "paths": []
+      },
+      "scope_paths": [],
+      "scope_seconds": 0.482594,
+      "retrieval_seconds": 0.037111,
+      "total_seconds": 0.519728,
+      "term_coverage": null,
+      "answer_pass": null
+    }
+  ]
+}

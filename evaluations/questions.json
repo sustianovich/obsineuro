@@ -1,0 +1,386 @@
+{
+  "descripcion": "Conjunto dorado del programa de cribado. Cubre recuperación básica, filtros por estado, vigencia y etiqueta, expansión de enlaces, contenido en tablas y código, y abstención.",
+  "vault": "vault_demo",
+  "cases": [
+    {
+      "id": "R01-poblacion-diana",
+      "question": "¿A qué población se dirige la invitación y cada cuánto se repite?",
+      "expected_paths": [
+        "protocolos/protocolo-cribado.md"
+      ],
+      "expected_terms": [
+        [
+          "50 a 69",
+          "50-69"
+        ],
+        [
+          "veinticuatro",
+          "24 meses"
+        ]
+      ],
+      "forbidden_paths": [
+        "protocolos/protocolo-cribado-v2.md"
+      ],
+      "vigencia": "no_caducada"
+    },
+    {
+      "id": "R02-plazo-lectura-tabla",
+      "question": "¿Cuál es el plazo máximo de la fase de lectura y quién es el responsable?",
+      "expected_paths": [
+        "protocolos/protocolo-cribado.md"
+      ],
+      "expected_terms": [
+        [
+          "10 dias",
+          "10 días",
+          "diez"
+        ],
+        [
+          "radiologia",
+          "radiología"
+        ]
+      ]
+    },
+    {
+      "id": "R03-discordancia-tercer-lector",
+      "question": "¿Qué ocurre cuando las dos lecturas difieren en categoría?",
+      "expected_paths": [
+        "circuitos/lectura-doble.md"
+      ],
+      "expected_terms": [
+        [
+          "tercer lector",
+          "dirimente"
+        ],
+        [
+          "cinco dias",
+          "cinco días"
+        ]
+      ]
+    },
+    {
+      "id": "R04-plazo-citacion-valoracion",
+      "question": "¿En cuánto tiempo hay que citar para valoración adicional tras una categoría R4?",
+      "expected_paths": [
+        "circuitos/valoracion-adicional.md"
+      ],
+      "expected_terms": [
+        [
+          "quince",
+          "15"
+        ],
+        [
+          "citacion",
+          "citación",
+          "citar"
+        ]
+      ]
+    },
+    {
+      "id": "R05-consulta-sql-codigo",
+      "question": "¿Qué consulta se usa para localizar resultados pendientes de comunicar?",
+      "expected_paths": [
+        "protocolos/protocolo-cribado.md"
+      ],
+      "expected_terms": [
+        [
+          "select",
+          "SELECT"
+        ],
+        [
+          "fecha_comunicacion"
+        ]
+      ]
+    },
+    {
+      "id": "R06-tasa-participacion-formula",
+      "question": "¿Sobre qué denominador se calcula la tasa de participación?",
+      "expected_paths": [
+        "indicadores/indicadores-proceso.md"
+      ],
+      "expected_terms": [
+        [
+          "entregadas"
+        ],
+        [
+          "participacion",
+          "participación"
+        ]
+      ]
+    },
+    {
+      "id": "R07-indicador-objetivo-tabla",
+      "question": "¿Qué objetivo tiene el indicador de cobertura de invitación?",
+      "expected_paths": [
+        "indicadores/indicadores-proceso.md"
+      ],
+      "expected_terms": [
+        [
+          "95"
+        ],
+        [
+          "cobertura"
+        ]
+      ]
+    },
+    {
+      "id": "R08-exclusiones-baja-voluntaria",
+      "question": "¿Cómo se tramita una baja voluntaria del programa y es reversible?",
+      "expected_paths": [
+        "circuitos/gestion-exclusiones.md"
+      ],
+      "expected_terms": [
+        [
+          "solicitud"
+        ],
+        [
+          "reversible",
+          "nueva solicitud"
+        ]
+      ]
+    },
+    {
+      "id": "R09-comunicacion-no-email",
+      "question": "¿Se pueden comunicar por correo electrónico los resultados que requieren valoración?",
+      "expected_paths": [
+        "circuitos/comunicacion-resultados.md"
+      ],
+      "expected_terms": [
+        [
+          "nunca",
+          "no se comunica"
+        ],
+        [
+          "telefonica",
+          "telefónica"
+        ]
+      ]
+    },
+    {
+      "id": "R10-trazabilidad-sicc",
+      "question": "¿Qué debe conservar todo registro según el marco normativo SICC 2025?",
+      "expected_paths": [
+        "referencias/normativa-sicc.md"
+      ],
+      "expected_terms": [
+        [
+          "identificador"
+        ],
+        [
+          "marca temporal",
+          "temporal"
+        ]
+      ]
+    },
+    {
+      "id": "F01-vigencia-excluye-derogado",
+      "question": "¿Cuál es el intervalo entre rondas del programa?",
+      "expected_paths": [
+        "protocolos/protocolo-cribado.md"
+      ],
+      "forbidden_paths": [
+        "protocolos/protocolo-cribado-v2.md"
+      ],
+      "vigencia": "no_caducada",
+      "expected_terms": [
+        [
+          "veinticuatro",
+          "24"
+        ]
+      ]
+    },
+    {
+      "id": "F02-vigencia-historico",
+      "question": "¿Qué población cubría el protocolo anterior y con qué intervalo?",
+      "expected_paths": [
+        "protocolos/protocolo-cribado-v2.md"
+      ],
+      "vigencia": "caducada",
+      "expected_terms": [
+        [
+          "45 a 69",
+          "45-69"
+        ],
+        [
+          "dieciocho",
+          "18"
+        ]
+      ]
+    },
+    {
+      "id": "F03-etiqueta-sicc",
+      "question": "requisitos de trazabilidad codificacion e indicadores del marco",
+      "expected_paths": [
+        "referencias/normativa-sicc.md"
+      ],
+      "tags": [
+        "sicc-2025"
+      ],
+      "forbidden_paths": [
+        "circuitos/gestion-exclusiones.md"
+      ]
+    },
+    {
+      "id": "F04-etiqueta-historico",
+      "question": "poblacion diana mujeres 45 a 69 anos intervalo rondas dieciocho meses",
+      "expected_paths": [
+        "protocolos/protocolo-cribado-v2.md"
+      ],
+      "tags": [
+        "historico"
+      ]
+    },
+    {
+      "id": "F05-estado-borrador",
+      "question": "segunda lectura remota para centros sin radiologia en jornada completa",
+      "expected_paths": [
+        "referencias/borrador-teleradiologia.md"
+      ],
+      "status": "borrador"
+    },
+    {
+      "id": "F06-estado-vigente-excluye-borrador",
+      "question": "lectura doble independiente y ciega de cada prueba",
+      "expected_paths": [
+        "circuitos/lectura-doble.md"
+      ],
+      "status": "vigente",
+      "forbidden_paths": [
+        "referencias/borrador-teleradiologia.md"
+      ]
+    },
+    {
+      "id": "E01-enlace-lectura-a-indicadores",
+      "question": "¿Con qué se mide el rendimiento del circuito de lectura doble?",
+      "expected_paths": [
+        "circuitos/lectura-doble.md",
+        "indicadores/indicadores-proceso.md"
+      ],
+      "expand_links": true,
+      "query_type": "relational"
+    },
+    {
+      "id": "E02-enlace-protocolo-a-exclusiones",
+      "question": "¿Quiénes quedan excluidas del programa de cribado?",
+      "expected_paths": [
+        "protocolos/protocolo-cribado.md"
+      ],
+      "expand_links": true,
+      "expected_terms": [
+        [
+          "seguimiento activo",
+          "baja voluntaria"
+        ]
+      ],
+      "query_type": "relational"
+    },
+    {
+      "id": "A01-fuera-de-dominio",
+      "question": "¿Cuál es el procedimiento de homologación de proveedores de catering hospitalario?",
+      "expect_abstention": true,
+      "query_type": "out_of_domain"
+    },
+    {
+      "id": "A02-sin-relacion",
+      "question": "¿Qué dice el reglamento sobre el aparcamiento de vehículos del personal?",
+      "expect_abstention": true,
+      "query_type": "out_of_domain"
+    },
+    {
+      "id": "A03-tema-ajeno",
+      "question": "protocolo de mantenimiento preventivo de ascensores y montacargas",
+      "expect_abstention": true,
+      "query_type": "out_of_domain"
+    },
+    {
+      "id": "D01-plazo-quince-dias-cual",
+      "question": "¿Cuántos días hay para citar a la participante tras confirmar una categoría R4?",
+      "expected_paths": [
+        "circuitos/valoracion-adicional.md"
+      ],
+      "forbidden_paths": [
+        "circuitos/comunicacion-resultados.md"
+      ],
+      "expected_terms": [
+        [
+          "quince",
+          "15"
+        ]
+      ]
+    },
+    {
+      "id": "D02-carta-resultado-normal",
+      "question": "¿En cuánto tiempo se envía la carta cuando el resultado es normal?",
+      "expected_paths": [
+        "circuitos/comunicacion-resultados.md"
+      ],
+      "forbidden_paths": [
+        "circuitos/valoracion-adicional.md"
+      ],
+      "expected_terms": [
+        [
+          "carta"
+        ],
+        [
+          "quince",
+          "15"
+        ]
+      ],
+      "requires_semantic": true,
+      "nota": "Sin solapamiento léxico con el documento: sólo lo resuelve un modelo de embedding real. Excluido del CI con doble de pruebas."
+    },
+    {
+      "id": "D03-protocolo-actual-no-anterior",
+      "question": "¿Cuántas fases tiene el circuito y cuáles son?",
+      "expected_paths": [
+        "protocolos/protocolo-cribado.md"
+      ],
+      "forbidden_paths": [
+        "protocolos/protocolo-cribado-v2.md"
+      ],
+      "vigencia": "no_caducada",
+      "expected_terms": [
+        [
+          "cuatro"
+        ],
+        [
+          "lectura"
+        ]
+      ]
+    },
+    {
+      "id": "D04-quien-resuelve-discordancia",
+      "question": "¿Quién decide cuando hay desacuerdo entre los dos radiólogos que leen la prueba?",
+      "expected_paths": [
+        "circuitos/lectura-doble.md"
+      ],
+      "forbidden_paths": [
+        "circuitos/valoracion-adicional.md"
+      ],
+      "expected_terms": [
+        [
+          "tercer",
+          "dirimente"
+        ]
+      ],
+      "requires_semantic": true,
+      "nota": "Sin solapamiento léxico con el documento: sólo lo resuelve un modelo de embedding real. Excluido del CI con doble de pruebas."
+    },
+    {
+      "id": "D05-exclusion-caduca-sola",
+      "question": "¿Qué tipo de exclusión desaparece por sí sola con el tiempo?",
+      "expected_paths": [
+        "circuitos/gestion-exclusiones.md"
+      ],
+      "expected_terms": [
+        [
+          "temporal"
+        ],
+        [
+          "veinticuatro",
+          "24"
+        ]
+      ]
+    }
+  ]
+}

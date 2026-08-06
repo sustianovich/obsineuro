@@ -1,0 +1,54 @@
+# Python: bytecode, cachés y herramientas de desarrollo
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.pyre/
+.ruff_cache/
+
+# Entornos virtuales y configuración local
+.venv/
+venv/
+env/
+ENV/
+.env
+.env.*
+!.env.example
+settings.local.json
+
+# Datos locales de la aplicación
+data/
+vault_demo/
+*.sqlite
+*.sqlite3
+*.db
+
+# Modelos descargados y cachés de Hugging Face
+models/
+.cache/
+*.onnx
+*.safetensors
+*.pt
+*.pth
+*.bin
+
+# Configuración local de editores y asistentes
+.claude/
+.codex/
+.agents/
+.vscode/
+.idea/
+
+# Temporales y logs
+*.log
+*.tmp
+*.temp
+
+# Windows y otros sistemas
+Thumbs.db
+desktop.ini
+.DS_Store

@@ -1,0 +1,680 @@
+{
+  "generated_at": "2026-07-26T07:14:40.464902+00:00",
+  "configuration": {
+    "embedding_model": "nomic-embed-text",
+    "chat_model": null,
+    "top_k": 6,
+    "min_similarity": 0.21,
+    "retrieval_mode": "hybrid",
+    "hybrid_rrf_k": 60,
+    "hybrid_semantic_weight": 1.0,
+    "hybrid_lexical_weight": 0.8,
+    "answers_generated": false,
+    "verification_enabled": false
+  },
+  "metrics": {
+    "cases": 24,
+    "answerable_cases": 21,
+    "abstention_cases": 3,
+    "retrieval_exact_hit_rate": 1.0,
+    "document_recall": 1.0,
+    "mean_reciprocal_rank": 0.9523809523809523,
+    "abstention_accuracy": 1.0,
+    "answer_term_coverage": null
+  },
+  "results": [
+    {
+      "id": "R01-poblacion-diana",
+      "question": "¿A qué población se dirige la invitación y cada cuánto se repite?",
+      "expected_paths": [
+        "protocolos/protocolo-cribado.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "protocolos/protocolo-cribado.md",
+        "circuitos/lectura-doble.md",
+        "circuitos/gestion-exclusiones.md",
+        "circuitos/valoracion-adicional.md"
+      ],
+      "scores": [
+        0.3845,
+        0.3268,
+        0.3268,
+        0.3268
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "R02-plazo-lectura-tabla",
+      "question": "¿Cuál es el plazo máximo de la fase de lectura y quién es el responsable?",
+      "expected_paths": [
+        "protocolos/protocolo-cribado.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "protocolos/protocolo-cribado.md",
+        "circuitos/comunicacion-resultados.md",
+        "circuitos/lectura-doble.md",
+        "circuitos/valoracion-adicional.md",
+        "circuitos/gestion-exclusiones.md",
+        "referencias/normativa-sicc.md",
+        "indicadores/indicadores-proceso.md"
+      ],
+      "scores": [
+        0.5947,
+        0.3748,
+        0.3333,
+        0.3333,
+        0.5055,
+        0.3186,
+        0.2833
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "R03-discordancia-tercer-lector",
+      "question": "¿Qué ocurre cuando las dos lecturas difieren en categoría?",
+      "expected_paths": [
+        "circuitos/lectura-doble.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "circuitos/lectura-doble.md",
+        "circuitos/lectura-doble.md",
+        "indicadores/indicadores-proceso.md"
+      ],
+      "scores": [
+        0.5426,
+        0.4011,
+        0.4612
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "R04-plazo-citacion-valoracion",
+      "question": "¿En cuánto tiempo hay que citar para valoración adicional tras una categoría R4?",
+      "expected_paths": [
+        "circuitos/valoracion-adicional.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "circuitos/valoracion-adicional.md",
+        "circuitos/valoracion-adicional.md",
+        "circuitos/comunicacion-resultados.md",
+        "protocolos/protocolo-cribado.md",
+        "circuitos/valoracion-adicional.md",
+        "circuitos/lectura-doble.md",
+        "referencias/normativa-sicc.md"
+      ],
+      "scores": [
+        0.4874,
+        0.3484,
+        0.2442,
+        0.5,
+        0.25,
+        0.4143,
+        0.2076
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "R05-consulta-sql-codigo",
+      "question": "¿Qué consulta se usa para localizar resultados pendientes de comunicar?",
+      "expected_paths": [
+        "protocolos/protocolo-cribado.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "protocolos/protocolo-cribado.md",
+        "circuitos/lectura-doble.md",
+        "circuitos/gestion-exclusiones.md",
+        "circuitos/valoracion-adicional.md"
+      ],
+      "scores": [
+        0.3834,
+        0.3259,
+        0.3259,
+        0.3259
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "R06-tasa-participacion-formula",
+      "question": "¿Sobre qué denominador se calcula la tasa de participación?",
+      "expected_paths": [
+        "indicadores/indicadores-proceso.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "indicadores/indicadores-proceso.md",
+        "indicadores/indicadores-proceso.md"
+      ],
+      "scores": [
+        0.5704,
+        0.3758
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "R07-indicador-objetivo-tabla",
+      "question": "¿Qué objetivo tiene el indicador de cobertura de invitación?",
+      "expected_paths": [
+        "indicadores/indicadores-proceso.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "indicadores/indicadores-proceso.md"
+      ],
+      "scores": [
+        0.5607
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "R08-exclusiones-baja-voluntaria",
+      "question": "¿Cómo se tramita una baja voluntaria del programa y es reversible?",
+      "expected_paths": [
+        "circuitos/gestion-exclusiones.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "protocolos/protocolo-cribado.md",
+        "circuitos/gestion-exclusiones.md",
+        "circuitos/gestion-exclusiones.md",
+        "referencias/borrador-teleradiologia.md",
+        "circuitos/lectura-doble.md",
+        "circuitos/valoracion-adicional.md"
+      ],
+      "scores": [
+        0.4554,
+        0.4463,
+        0.2955,
+        0.2236,
+        0.387,
+        0.387
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 0.5,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "R09-comunicacion-no-email",
+      "question": "¿Se pueden comunicar por correo electrónico los resultados que requieren valoración?",
+      "expected_paths": [
+        "circuitos/comunicacion-resultados.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "circuitos/comunicacion-resultados.md",
+        "protocolos/protocolo-cribado.md",
+        "circuitos/valoracion-adicional.md",
+        "referencias/normativa-sicc.md",
+        "circuitos/lectura-doble.md",
+        "circuitos/gestion-exclusiones.md"
+      ],
+      "scores": [
+        0.4989,
+        0.2857,
+        0.2857,
+        0.4241,
+        0.2429,
+        0.2429
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "R10-trazabilidad-sicc",
+      "question": "¿Qué debe conservar todo registro según el marco normativo SICC 2025?",
+      "expected_paths": [
+        "referencias/normativa-sicc.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "referencias/normativa-sicc.md",
+        "referencias/normativa-sicc.md",
+        "circuitos/comunicacion-resultados.md",
+        "referencias/normativa-sicc.md",
+        "indicadores/indicadores-proceso.md",
+        "circuitos/valoracion-adicional.md"
+      ],
+      "scores": [
+        0.4432,
+        0.4333,
+        0.3563,
+        0.3185,
+        0.3767,
+        0.3029
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "F01-vigencia-excluye-derogado",
+      "question": "¿Cuál es el intervalo entre rondas del programa?",
+      "expected_paths": [
+        "protocolos/protocolo-cribado.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "protocolos/protocolo-cribado.md",
+        "circuitos/lectura-doble.md",
+        "circuitos/gestion-exclusiones.md",
+        "circuitos/valoracion-adicional.md"
+      ],
+      "scores": [
+        0.4204,
+        0.3573,
+        0.3573,
+        0.3573
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "F02-vigencia-historico",
+      "question": "¿Qué población cubría el protocolo anterior y con qué intervalo?",
+      "expected_paths": [
+        "protocolos/protocolo-cribado-v2.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "protocolos/protocolo-cribado-v2.md"
+      ],
+      "scores": [
+        0.4742
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "F03-etiqueta-sicc",
+      "question": "requisitos de trazabilidad codificacion e indicadores del marco",
+      "expected_paths": [
+        "referencias/normativa-sicc.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "referencias/normativa-sicc.md",
+        "protocolos/protocolo-cribado.md",
+        "referencias/normativa-sicc.md",
+        "indicadores/indicadores-proceso.md",
+        "circuitos/valoracion-adicional.md"
+      ],
+      "scores": [
+        0.7034,
+        0.4,
+        0.4,
+        0.5979,
+        0.34
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "F04-etiqueta-historico",
+      "question": "poblacion diana mujeres 45 a 69 anos intervalo rondas dieciocho meses",
+      "expected_paths": [
+        "protocolos/protocolo-cribado-v2.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "protocolos/protocolo-cribado-v2.md"
+      ],
+      "scores": [
+        0.8157
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "F05-estado-borrador",
+      "question": "segunda lectura remota para centros sin radiologia en jornada completa",
+      "expected_paths": [
+        "referencias/borrador-teleradiologia.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "referencias/borrador-teleradiologia.md"
+      ],
+      "scores": [
+        0.736
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "F06-estado-vigente-excluye-borrador",
+      "question": "lectura doble independiente y ciega de cada prueba",
+      "expected_paths": [
+        "circuitos/lectura-doble.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "protocolos/protocolo-cribado.md",
+        "circuitos/lectura-doble.md",
+        "circuitos/valoracion-adicional.md",
+        "circuitos/lectura-doble.md",
+        "circuitos/lectura-doble.md",
+        "circuitos/gestion-exclusiones.md",
+        "indicadores/indicadores-proceso.md"
+      ],
+      "scores": [
+        0.4437,
+        0.4292,
+        0.339,
+        0.2899,
+        0.3333,
+        0.3772,
+        0.3648
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 0.5,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "E01-enlace-lectura-a-indicadores",
+      "question": "¿Con qué se mide el rendimiento del circuito de lectura doble?",
+      "expected_paths": [
+        "circuitos/lectura-doble.md",
+        "indicadores/indicadores-proceso.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "circuitos/lectura-doble.md",
+        "circuitos/valoracion-adicional.md",
+        "protocolos/protocolo-cribado.md",
+        "circuitos/lectura-doble.md",
+        "circuitos/lectura-doble.md",
+        "protocolos/protocolo-cribado-v2.md",
+        "indicadores/indicadores-proceso.md",
+        "circuitos/gestion-exclusiones.md"
+      ],
+      "scores": [
+        0.7869,
+        0.5512,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6688,
+        0.51
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "E02-enlace-protocolo-a-exclusiones",
+      "question": "¿Quiénes quedan excluidas del programa de cribado?",
+      "expected_paths": [
+        "protocolos/protocolo-cribado.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "protocolos/protocolo-cribado.md",
+        "protocolos/protocolo-cribado.md",
+        "protocolos/protocolo-cribado.md",
+        "circuitos/lectura-doble.md",
+        "circuitos/gestion-exclusiones.md",
+        "circuitos/valoracion-adicional.md"
+      ],
+      "scores": [
+        0.6033,
+        0.4,
+        0.4,
+        0.5128,
+        0.5128,
+        0.5128
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "A01-fuera-de-dominio",
+      "question": "¿Cuál es el procedimiento de homologación de proveedores de catering hospitalario?",
+      "expected_paths": [],
+      "expect_abstention": true,
+      "retrieved_paths": [],
+      "scores": [],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": null,
+      "reciprocal_rank": null,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "A02-sin-relacion",
+      "question": "¿Qué dice el reglamento sobre el aparcamiento de vehículos del personal?",
+      "expected_paths": [],
+      "expect_abstention": true,
+      "retrieved_paths": [],
+      "scores": [],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": null,
+      "reciprocal_rank": null,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "A03-tema-ajeno",
+      "question": "protocolo de mantenimiento preventivo de ascensores y montacargas",
+      "expected_paths": [],
+      "expect_abstention": true,
+      "retrieved_paths": [],
+      "scores": [],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": null,
+      "reciprocal_rank": null,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "D01-plazo-quince-dias-cual",
+      "question": "¿Cuántos días hay para citar a la participante tras confirmar una categoría R4?",
+      "expected_paths": [
+        "circuitos/valoracion-adicional.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "circuitos/valoracion-adicional.md",
+        "circuitos/lectura-doble.md",
+        "protocolos/protocolo-cribado.md",
+        "circuitos/valoracion-adicional.md",
+        "indicadores/indicadores-proceso.md",
+        "circuitos/gestion-exclusiones.md"
+      ],
+      "scores": [
+        0.2917,
+        0.25,
+        0.25,
+        0.375,
+        0.2125,
+        0.2125
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "D03-protocolo-actual-no-anterior",
+      "question": "¿Cuántas fases tiene el circuito y cuáles son?",
+      "expected_paths": [
+        "protocolos/protocolo-cribado.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "protocolos/protocolo-cribado.md",
+        "circuitos/lectura-doble.md",
+        "circuitos/valoracion-adicional.md",
+        "circuitos/lectura-doble.md",
+        "circuitos/gestion-exclusiones.md",
+        "indicadores/indicadores-proceso.md"
+      ],
+      "scores": [
+        0.3512,
+        0.235,
+        0.222,
+        0.2179,
+        0.2986,
+        0.1997
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    },
+    {
+      "id": "D05-exclusion-caduca-sola",
+      "question": "¿Qué tipo de exclusión desaparece por sí sola con el tiempo?",
+      "expected_paths": [
+        "circuitos/gestion-exclusiones.md"
+      ],
+      "expect_abstention": false,
+      "retrieved_paths": [
+        "circuitos/gestion-exclusiones.md"
+      ],
+      "scores": [
+        0.35
+      ],
+      "retrieval_pass": true,
+      "leaked_paths": [],
+      "document_recall": 1.0,
+      "reciprocal_rank": 1.0,
+      "answer": null,
+      "agent_metrics": null,
+      "term_coverage": null,
+      "answer_pass": null
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "generated_at": "2026-07-26T21:33:31.263996+00:00",
+  "scope_off": {
+    "configuration": {
+      "embedding_model": "nomic-embed-text",
+      "chat_model": null,
+      "top_k": 6,
+      "min_similarity": 0.3,
+      "retrieval_mode": "hybrid",
+      "hybrid_rrf_k": 60,
+      "hybrid_semantic_weight": 1.0,
+      "hybrid_lexical_weight": 0.8,
+      "answers_generated": false,
+      "verification_enabled": false,
+      "scope_enabled": false,
+      "scope_context_tokens": 4096
+    },
+    "metrics": {
+      "cases": 16,
+      "answerable_cases": 16,
+      "abstention_cases": 0,
+      "retrieval_exact_hit_rate": 1.0,
+      "document_recall": 1.0,
+      "mean_reciprocal_rank": 0.9375,
+      "abstention_accuracy": 0.0,
+      "answer_term_coverage": null,
+      "mean_scope_seconds": 0.0,
+      "mean_retrieval_seconds": 0.0937411875,
+      "mean_total_seconds": 0.0937651875
+    }
+  },
+  "scope_on": {
+    "configuration": {
+      "embedding_model": "nomic-embed-text",
+      "chat_model": null,
+      "top_k": 6,
+      "min_similarity": 0.3,
+      "retrieval_mode": "hybrid",
+      "hybrid_rrf_k": 60,
+      "hybrid_semantic_weight": 1.0,
+      "hybrid_lexical_weight": 0.8,
+      "answers_generated": false,
+      "verification_enabled": false,
+      "scope_enabled": true,
+      "scope_context_tokens": 4096
+    },
+    "metrics": {
+      "cases": 16,
+      "answerable_cases": 16,
+      "abstention_cases": 0,
+      "retrieval_exact_hit_rate": 1.0,
+      "document_recall": 1.0,
+      "mean_reciprocal_rank": 0.9375,
+      "abstention_accuracy": 0.0,
+      "answer_term_coverage": null,
+      "mean_scope_seconds": 0.5302955625,
+      "mean_retrieval_seconds": 0.0386749375,
+      "mean_total_seconds": 0.56899325
+    }
+  },
+  "on_minus_off": {
+    "retrieval_exact_hit_rate": 0.0,
+    "document_recall": 0.0,
+    "mean_reciprocal_rank": 0.0,
+    "abstention_accuracy": 0.0,
+    "answer_term_coverage": null,
+    "mean_scope_seconds": 0.530296,
+    "mean_retrieval_seconds": -0.055066,
+    "mean_total_seconds": 0.475228
+  }
+}
