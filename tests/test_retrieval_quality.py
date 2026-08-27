@@ -10,6 +10,7 @@ from app.rag.retrieval import (
     apply_relative_cutoff,
     build_fts_match_query,
     lexical_term_coverage,
+    merge_semantic_candidates,
     required_lexical_matches,
 )
 
@@ -115,6 +116,53 @@ def test_corte_relativo_nunca_vacia_el_resultado(scores, ratio):
         assert kept[0]["semantic_score"] == pytest.approx(scores[0])
     finally:
         settings.min_relative_score = original
+
+
+# ----------------------------------------------------------------------
+# Recuperación semántica doble: pregunta actual + versión contextual.
+# ----------------------------------------------------------------------
+def semantic_candidate(chunk_id: int, score: float) -> dict:
+    return {
+        "chunk_id": chunk_id,
+        "document_id": chunk_id,
+        "row": chunk_id,
+        "semantic_score": score,
+    }
+
+
+def test_fusion_semantica_dual_conserva_prioridad_de_la_pregunta_actual():
+    desired = semantic_candidate(1, 0.78)
+    distractor = semantic_candidate(2, 0.77)
+    current = [desired, distractor]
+    contextual = [
+        semantic_candidate(chunk_id, 0.80 - chunk_id / 1000)
+        for chunk_id in range(3, 6)
+    ] + [
+        semantic_candidate(2, 0.75),
+    ] + [
+        semantic_candidate(chunk_id, 0.74 - chunk_id / 1000)
+        for chunk_id in range(6, 13)
+    ] + [semantic_candidate(1, 0.73)]
+
+    merged = merge_semantic_candidates(current, contextual)
+
+    assert merged[0]["chunk_id"] == 1
+    assert merged[0]["semantic_sources"] == ["actual", "contextual"]
+    assert merged[0]["semantic_score"] == pytest.approx(0.78)
+
+
+def test_fusion_semantica_dual_incluye_evidencia_solo_contextual():
+    current = [semantic_candidate(1, 0.70)]
+    contextual = [semantic_candidate(2, 0.85)]
+
+    merged = merge_semantic_candidates(current, contextual)
+
+    assert [item["chunk_id"] for item in merged] == [2, 1]
+    assert merged[0]["semantic_sources"] == ["contextual"]
+    assert merged[0]["semantic_branch_weights"] == {
+        "actual": 0.5,
+        "contextual": 1.0,
+    }
 
 
 # ----------------------------------------------------------------------

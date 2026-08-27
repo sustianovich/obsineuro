@@ -47,6 +47,8 @@ class QueryRequest(BaseModel):
     expand_links: bool = True
     vigencia: str | None = Field(default=None, max_length=20)
     tags: list[str] = Field(default_factory=list, max_length=10)
+    iteration: int = Field(default=0, ge=0, le=10)
+    iteration_feedback: str = Field(default="", max_length=500)
 
     @field_validator("vigencia")
     @classmethod

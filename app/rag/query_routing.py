@@ -172,15 +172,17 @@ def route_query(
     semantic: list[dict[str, Any]],
     alias_index: dict[str, Any] | None = None,
     edges: Sequence[tuple[int, int]] | None = None,
+    force: bool = False,
 ) -> RetrievalPolicy:
     """Clasifica una consulta y devuelve la política a aplicar.
 
     `semantic` ya llegó filtrado por la abstención de `retrieve()`: nunca
     está vacío aquí. `alias_index` y `edges` son opcionales para que las
     pruebas puedan enrutar sin tocar SQLite; en producción `retrieve()` los
-    calcula una sola vez por consulta.
+    calcula una sola vez por consulta. `force` sólo se usa en evaluaciones
+    para medir el enrutador aunque esté desactivado globalmente.
     """
-    if not settings.query_routing_enabled:
+    if not settings.query_routing_enabled and not force:
         return RetrievalPolicy.from_settings(
             query_type="unrouted",
             confidence=1.0,

@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import hashlib
 import ipaddress
+import logging
 import os
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit
@@ -9,10 +12,12 @@ from urllib.parse import urlsplit, urlunsplit
 from dotenv import load_dotenv
 
 
+logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 DEFAULT_RERANK_ONNX_DIR = BASE_DIR / "models" / "bge-reranker-v2-m3-onnx"
 RERANK_ENABLED_MODELS = frozenset({"qwen3.5:2b", "qwen3.5:4b"})
+LEGACY_DATABASE_PATH = BASE_DIR / "data" / "rag_index.sqlite3"
 
 
 def resolve_config_path(value: str, default: Path) -> Path:
@@ -21,6 +26,51 @@ def resolve_config_path(value: str, default: Path) -> Path:
     if not candidate.is_absolute():
         candidate = BASE_DIR / candidate
     return candidate.resolve()
+
+
+def slugify_vault_path(vault_path: Path) -> str:
+    """Identificador estable y legible para la base de datos del vault."""
+    resolved = vault_path.resolve()
+    name = re.sub(r"[^a-z0-9]+", "-", resolved.name.lower()).strip("-")
+    digest = hashlib.sha256(resolved.as_posix().encode("utf-8")).hexdigest()
+    return f"{name or 'vault'}-{digest[:10]}"
+
+
+def default_database_path_for_vault(vault_path: Path) -> Path:
+    slug = slugify_vault_path(vault_path)
+    return BASE_DIR / "data" / "vaults" / slug / "rag_index.sqlite3"
+
+
+def migrate_legacy_database(target: Path) -> None:
+    """Traslada la base de datos global antigua al nuevo layout por vault.
+
+    Se ejecuta una sola vez: sólo cuando el destino derivado para el vault
+    activo aún no existe y queda una base global previa a la introducción
+    del aislamiento por vault.
+    """
+    if target.exists() or not LEGACY_DATABASE_PATH.exists():
+        return
+    if LEGACY_DATABASE_PATH.resolve() == target.resolve():
+        return
+    try:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        for suffix in ("", "-wal", "-shm"):
+            legacy_file = LEGACY_DATABASE_PATH.with_name(
+                LEGACY_DATABASE_PATH.name + suffix
+            )
+            if legacy_file.exists():
+                legacy_file.replace(target.with_name(target.name + suffix))
+    except OSError:
+        # La BD legacy puede estar bloqueada (proceso en marcha, backup,
+        # antivirus). No debe impedir el arranque; se reintentará en el
+        # próximo inicio mientras el destino no exista.
+        logger.warning(
+            "No se pudo migrar la base de datos legacy %s a %s; "
+            "se reintentará en el próximo arranque.",
+            LEGACY_DATABASE_PATH,
+            target,
+            exc_info=True,
+        )
 
 
 def display_configured_path(path: Path) -> str:
@@ -105,6 +155,7 @@ class Settings:
     ollama_timeout_seconds: float
     vault_path: Path
     database_path: Path
+    database_path_explicit: bool
     top_k: int
     min_similarity: float
     chunk_size: int
@@ -234,6 +285,22 @@ configured_child_chunk_overlap = min(
 )
 
 
+_configured_vault_path = resolve_config_path(
+    os.getenv("OBSIDIAN_VAULT_PATH", ""),
+    BASE_DIR / "vault_demo",
+)
+_database_path_explicit = bool(os.getenv("RAG_DATABASE_PATH", "").strip())
+if _database_path_explicit:
+    _configured_database_path = resolve_config_path(
+        os.getenv("RAG_DATABASE_PATH", ""),
+        BASE_DIR / "data" / "rag_index.sqlite3",
+    )
+else:
+    _configured_database_path = default_database_path_for_vault(
+        _configured_vault_path
+    )
+    migrate_legacy_database(_configured_database_path)
+
 settings = Settings(
     base_dir=BASE_DIR,
     ollama_base_url=normalize_local_ollama_url(
@@ -247,14 +314,9 @@ settings = Settings(
     ollama_timeout_seconds=max(
         10.0, float(os.getenv("OLLAMA_TIMEOUT_SECONDS", "180"))
     ),
-    vault_path=resolve_config_path(
-        os.getenv("OBSIDIAN_VAULT_PATH", ""),
-        BASE_DIR / "vault_demo",
-    ),
-    database_path=resolve_config_path(
-        os.getenv("RAG_DATABASE_PATH", ""),
-        BASE_DIR / "data" / "rag_index.sqlite3",
-    ),
+    vault_path=_configured_vault_path,
+    database_path=_configured_database_path,
+    database_path_explicit=_database_path_explicit,
     top_k=max(1, int(os.getenv("RAG_TOP_K", "6"))),
     min_similarity=min(
         1.0,

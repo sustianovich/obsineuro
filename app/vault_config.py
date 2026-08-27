@@ -4,8 +4,16 @@ import os
 from pathlib import Path
 from threading import Lock
 
-from app.config import BASE_DIR, resolve_config_path, settings
+from app.config import (
+    BASE_DIR,
+    default_database_path_for_vault,
+    resolve_config_path,
+    settings,
+)
+from app.db import init_db
 from app.env_config import update_env_value
+from app.rag.graph import graph_store
+from app.rag.vector_store import vector_store
 
 
 VAULT_ENV_KEY = "OBSIDIAN_VAULT_PATH"
@@ -76,6 +84,11 @@ def configure_vault_path(
             env_path=target_env,
         )
         settings.vault_path = resolved
+        if not settings.database_path_explicit:
+            settings.database_path = default_database_path_for_vault(resolved)
+        init_db()
+        vector_store.invalidate()
+        graph_store.invalidate()
     return resolved
 
 

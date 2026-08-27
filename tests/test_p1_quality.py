@@ -243,6 +243,18 @@ def test_sin_fuentes_no_hay_cita_huerfana():
     assert not informe.uncited_answer
 
 
+def test_abstencion_del_verificador_no_exige_citas_aunque_conserve_fuentes():
+    limpio, informe, aviso = validate_answer(
+        "No hay evidencia suficiente.",
+        4,
+        abstained=True,
+    )
+    assert limpio == "No hay evidencia suficiente."
+    assert not informe.uncited_answer
+    assert informe.unused_sources == ()
+    assert aviso is None
+
+
 def test_informa_de_fuentes_no_utilizadas():
     informe = analyse_citations("Solo uso [2].", 3)
     assert informe.unused_sources == (1, 3)

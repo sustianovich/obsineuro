@@ -72,6 +72,7 @@ const elements = {
     documentCount: document.getElementById("document-count"),
     chunkCount: document.getElementById("chunk-count"),
     vaultPath: document.getElementById("vault-path"),
+    graphHealthHint: document.getElementById("graph-health-hint"),
     systemMessage: document.getElementById("system-message"),
     form: document.getElementById("question-form"),
     question: document.getElementById("question"),
@@ -2032,6 +2033,50 @@ function updateTagFilter(tags) {
 elements.tagFilterSearch.addEventListener("input", filterTagOptions);
 elements.tagFilterClear.addEventListener("click", clearTagFilter);
 
+function updateGraphHealth(graph) {
+    // Enlaces rotos, notas huérfanas y alias ambiguos ya los calcula el
+    // backend en cada reindexado (app.db.links.get_document_graph_status);
+    // aquí sólo se traduce a un aviso legible cuando hay algo que revisar.
+    if (!elements.graphHealthHint) {
+        return;
+    }
+    if (!graph?.available) {
+        elements.graphHealthHint.hidden = true;
+        return;
+    }
+
+    const issues = [];
+    const broken = Number(graph.broken_edges ?? 0);
+    const orphans = Number(graph.orphan_documents ?? 0);
+    const ambiguous = Number(graph.ambiguous_aliases ?? 0);
+    if (broken > 0) {
+        issues.push(
+            `${broken} enlace${broken === 1 ? "" : "s"} [[...]] roto${
+                broken === 1 ? "" : "s"
+            }`
+        );
+    }
+    if (orphans > 0) {
+        issues.push(
+            `${orphans} nota${orphans === 1 ? "" : "s"} sin conexiones`
+        );
+    }
+    if (ambiguous > 0) {
+        issues.push(
+            `${ambiguous} alias ambiguo${ambiguous === 1 ? "" : "s"}`
+        );
+    }
+
+    if (!issues.length) {
+        elements.graphHealthHint.hidden = true;
+        return;
+    }
+    elements.graphHealthHint.textContent =
+        `Grafo de enlaces: ${issues.join(", ")}. Revisa los wikienlaces ` +
+        "y los títulos duplicados del vault.";
+    elements.graphHealthHint.hidden = false;
+}
+
 function updateStatusFilter(statuses) {
     // El vocabulario de estados lo define el vault del cliente, no una
     // lista escrita a mano en el HTML.
@@ -2098,6 +2143,7 @@ async function loadStatus() {
             data.retrieval?.vector_store?.tag_counts
             ?? data.retrieval?.vector_store?.tags
         );
+        updateGraphHealth(data.retrieval?.graph);
         const graphConfigured =
             data.retrieval?.graph?.configured === true;
         elements.expandLinks.disabled = graphConfigured;
@@ -2370,10 +2416,13 @@ elements.selectVaultButton.addEventListener("click", async () => {
         }
         elements.vaultPath.textContent =
             result.vault_display_path ?? result.vault_path;
+        startNewConversation();
         await loadStatus();
+        await loadProjects({loadThreads: true});
         elements.systemMessage.textContent =
-            "Vault seleccionado. Pulsa «Indexar documentos» para " +
-            "reconstruir o actualizar el índice.";
+            "Vault seleccionado. Los proyectos y conversaciones mostrados " +
+            "ahora corresponden a este vault. Pulsa «Indexar documentos» " +
+            "para reconstruir o actualizar el índice.";
     } catch (error) {
         elements.systemMessage.textContent = error.message;
     } finally {

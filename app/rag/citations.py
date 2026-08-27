@@ -78,17 +78,26 @@ def mark_invalid_citations(answer: str, source_count: int) -> str:
 def validate_answer(
     answer: str,
     source_count: int,
+    *,
+    abstained: bool = False,
 ) -> tuple[str, CitationReport, str | None]:
-    """Devuelve la respuesta saneada, el informe y un aviso si procede."""
-    report = analyse_citations(answer, source_count)
+    """Devuelve la respuesta saneada, el informe y un aviso si procede.
+
+    Una abstención dirigida por el verificador puede conservar fuentes en la
+    interfaz para que la persona inspeccione la evidencia rechazada. Esa
+    respuesta no pretende formular afirmaciones documentales y, por tanto,
+    no debe marcarse como una respuesta ordinaria sin citas.
+    """
+    effective_source_count = 0 if abstained else source_count
+    report = analyse_citations(answer, effective_source_count)
     if not report.has_invalid:
         return answer, report, None
 
-    cleaned = mark_invalid_citations(answer, source_count)
+    cleaned = mark_invalid_citations(answer, effective_source_count)
     listed = ", ".join(f"[{value}]" for value in report.invalid_references)
     warning = (
         f"La respuesta citaba {listed}, que no corresponde a ninguna "
-        f"fuente recuperada ({source_count} disponibles). "
+        f"fuente recuperada ({effective_source_count} disponibles). "
         "Esas referencias se han marcado como no verificables."
     )
     return cleaned, report, warning

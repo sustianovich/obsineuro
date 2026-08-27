@@ -31,6 +31,22 @@ def test_router_desactivado_reproduce_from_settings(monkeypatch):
     assert policy.query_type == "unrouted"
 
 
+def test_router_se_puede_forzar_para_evaluacion(monkeypatch):
+    monkeypatch.setattr(settings, "query_routing_enabled", False)
+    monkeypatch.setattr(settings, "min_similarity", 0.30)
+
+    policy = route_query(
+        "¿cómo se relaciona el nodo con el proceso de auditoría?",
+        semantic=semantic_seed(score=0.9),
+        alias_index={},
+        edges=(),
+        force=True,
+    )
+
+    assert policy.query_type == "relational"
+    assert policy.use_graph is True
+
+
 # ----------------------------------------------------------------------
 # 5. Consulta incierta cae en la política factual (conservadora).
 # ----------------------------------------------------------------------

@@ -33,9 +33,10 @@ from app.rag.vector_store import vector_store
 INDEX_FORMAT_VERSION = 4
 # El troceado estructurado cambia las fronteras de los fragmentos: al
 # variar esta versión el índice se reconstruye de forma atómica.
-CHUNKER_VERSION = "structured-1"
+CHUNKER_VERSION = "structured-2"
 INDEX_FINGERPRINT_KEY = "index_fingerprint"
 EMBEDDING_PROVIDER = "ollama"
+EXCLUDED_VAULT_DIRECTORIES = {".obsidian", "_plantillas", "_templates"}
 _indexing_lock = Lock()
 logger = logging.getLogger(__name__)
 PUBLIC_INDEX_ERROR = "No se pudo indexar este documento."
@@ -215,7 +216,10 @@ def discover_markdown_files(vault_path: Path) -> list[Path]:
     output: list[Path] = []
     for path in vault_path.rglob("*.md"):
         relative_parts = path.relative_to(vault_path).parts
-        if ".obsidian" in relative_parts:
+        directory_names = {
+            part.casefold() for part in relative_parts[:-1]
+        }
+        if directory_names.intersection(EXCLUDED_VAULT_DIRECTORIES):
             continue
         if any(part.startswith(".") for part in relative_parts):
             continue

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from app.config import settings
@@ -72,6 +73,44 @@ def _compact_text(value: str, limit: int) -> str:
     if limit <= 1:
         return "…"
     return normalized[: limit - 1].rstrip() + "…"
+
+
+def _compact_recent_text(value: str, limit: int) -> str:
+    """Recorta historial por el inicio y conserva los turnos más recientes."""
+    normalized = value.strip()
+    if len(normalized) <= limit:
+        return normalized
+    if limit <= 1:
+        return "…"
+    return "…" + normalized[-(limit - 1) :].lstrip()
+
+
+def _recent_retrieval_memory(value: str, *, turn_limit: int = 2) -> str:
+    """Selecciona los últimos turnos del formato de memoria conversacional."""
+    normalized = value.strip()
+    turn_starts = [
+        match.start()
+        for match in re.finditer(r"(?m)^USUARIO\s*$", normalized)
+    ]
+    if turn_starts:
+        start = turn_starts[-turn_limit]
+        normalized = normalized[start:]
+    blocks = re.split(r"(?m)(?=^USUARIO\s*$)", normalized)
+    cleaned_blocks: list[str] = []
+    unhelpful_prefixes = (
+        "no se encontró documentación suficientemente relacionada",
+        "no consta suficientemente en la documentación recuperada",
+    )
+    for block in blocks:
+        parts = re.split(r"(?m)^ASISTENTE\s*$", block, maxsplit=1)
+        if len(parts) == 2 and parts[1].strip().casefold().startswith(
+            unhelpful_prefixes
+        ):
+            block = parts[0].rstrip()
+        if block.strip():
+            cleaned_blocks.append(block.strip())
+    normalized = "\n\n".join(cleaned_blocks)
+    return _compact_recent_text(normalized, 2000)
 
 
 def format_memory_context(
@@ -150,7 +189,10 @@ def build_memory_aware_retrieval_query(
 ) -> str:
     if not memory_context.strip():
         return question
-    retrieval_context = _compact_text(memory_context, 2000)
+    # Para resolver pronombres importa más el último turno que el primero.
+    # `memory_context` coloca los turnos recientes en orden cronológico, así
+    # que este presupuesto se consume desde el final.
+    retrieval_context = _recent_retrieval_memory(memory_context)
     return f"""
 PREGUNTA ACTUAL (PRIORIDAD)
 {question}

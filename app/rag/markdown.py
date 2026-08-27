@@ -25,6 +25,8 @@ FRONTMATTER_RE = re.compile(
 )
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$", flags=re.MULTILINE)
 WIKI_LINK_RE = re.compile(r"(!?)\[\[([^\]]+)\]\]")
+CODE_FENCE_RE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
+INLINE_CODE_RE = re.compile(r"(`+)(.*?)\1")
 
 
 @dataclass
@@ -97,13 +99,36 @@ def extract_title(
     return fallback
 
 
+def _strip_markdown_code(body: str) -> str:
+    """Oculta código cercado y en línea antes de buscar wikienlaces."""
+    output: list[str] = []
+    inside_fence = False
+    fence_marker = ""
+    for line in body.split("\n"):
+        fence = CODE_FENCE_RE.match(line)
+        if fence:
+            marker = fence.group(1)[0]
+            if not inside_fence:
+                inside_fence = True
+                fence_marker = marker
+            elif marker == fence_marker:
+                inside_fence = False
+            output.append("")
+            continue
+        output.append("" if inside_fence else INLINE_CODE_RE.sub("", line))
+    return "\n".join(output)
+
+
 def extract_wiki_links(body: str) -> list[dict[str, Any]]:
     links: list[dict[str, Any]] = []
     seen: set[tuple[str, str, str, bool]] = set()
 
-    for match in WIKI_LINK_RE.finditer(body):
+    for match in WIKI_LINK_RE.finditer(_strip_markdown_code(body)):
         embedded = bool(match.group(1))
-        raw = match.group(2).strip()
+        # Dentro de una tabla Markdown, Obsidian escribe el separador del
+        # alias como ``\|`` para que no cierre la celda. Sigue siendo el
+        # mismo wikienlace ``[[Nota|alias]]`` y no parte del destino.
+        raw = match.group(2).strip().replace("\\|", "|")
 
         target_part, alias = (
             raw.split("|", 1) if "|" in raw else (raw, "")

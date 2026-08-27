@@ -67,6 +67,8 @@ SPANISH_STOPWORDS = {
 }
 
 MAX_LINKED_ADDITIONS = 3
+SEMANTIC_BRANCH_DOMINANCE_MARGIN = 0.08
+SEMANTIC_WEAK_BRANCH_WEIGHT = 0.5
 
 # Diagnóstico del último reordenado, para exponerlo en la respuesta.
 last_rerank_outcome: dict[str, Any] = {}
@@ -247,6 +249,86 @@ def _semantic_candidates(
     )
 
 
+def merge_semantic_candidates(
+    current: list[dict[str, Any]],
+    contextual: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Fusiona dos rankings semánticos sin mezclar sus embeddings.
+
+    La pregunta actual y su versión enriquecida con memoria pueden tener
+    distribuciones de coseno distintas, por lo que no se promedian sus
+    vectores ni sus puntuaciones. Se fusionan por rango recíproco: aparecer
+    en ambas ramas aporta más evidencia que encabezar sólo una. Si una rama
+    supera claramente a la otra en su mejor coseno, la rama débil conserva
+    la mitad de peso; esto permite que una pregunta pronominal sea rescatada
+    por el contexto sin silenciar la pregunta actual.
+    """
+    if not contextual:
+        return current
+
+    current_best = max(
+        (float(item["semantic_score"]) for item in current),
+        default=0.0,
+    )
+    contextual_best = max(
+        (float(item["semantic_score"]) for item in contextual),
+        default=0.0,
+    )
+    current_weight = 1.0
+    contextual_weight = 1.0
+    if contextual_best - current_best >= SEMANTIC_BRANCH_DOMINANCE_MARGIN:
+        current_weight = SEMANTIC_WEAK_BRANCH_WEIGHT
+    elif current_best - contextual_best >= SEMANTIC_BRANCH_DOMINANCE_MARGIN:
+        contextual_weight = SEMANTIC_WEAK_BRANCH_WEIGHT
+
+    merged: dict[int, dict[str, Any]] = {}
+    for source, weight, candidates in (
+        ("actual", current_weight, current),
+        ("contextual", contextual_weight, contextual),
+    ):
+        score_key = f"semantic_{source}_score"
+        rank_key = f"semantic_{source}_rank"
+        for rank, candidate in enumerate(candidates, start=1):
+            chunk_id = int(candidate["chunk_id"])
+            item = merged.setdefault(chunk_id, dict(candidate))
+            item[score_key] = float(candidate["semantic_score"])
+            item[rank_key] = rank
+            item["semantic_dual_rrf"] = float(
+                item.get("semantic_dual_rrf", 0.0)
+            ) + (weight / rank)
+
+    for item in merged.values():
+        branch_scores = [
+            float(item[key])
+            for key in (
+                "semantic_actual_score",
+                "semantic_contextual_score",
+            )
+            if item.get(key) is not None
+        ]
+        item["semantic_score"] = max(branch_scores)
+        item["semantic_sources"] = [
+            source
+            for source in ("actual", "contextual")
+            if item.get(f"semantic_{source}_score") is not None
+        ]
+        item["semantic_branch_weights"] = {
+            "actual": current_weight,
+            "contextual": contextual_weight,
+        }
+
+    output = list(merged.values())
+    output.sort(
+        key=lambda item: (
+            float(item["semantic_dual_rrf"]),
+            item.get("semantic_actual_rank") is not None,
+            float(item["semantic_score"]),
+        ),
+        reverse=True,
+    )
+    return output
+
+
 def apply_relative_cutoff(
     semantic: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
@@ -399,6 +481,16 @@ def _fuse(
             if chunk_id in semantic_payload
             else None
         )
+        if chunk_id in semantic_payload:
+            for key in (
+                "semantic_actual_score",
+                "semantic_contextual_score",
+                "semantic_dual_rrf",
+                "semantic_sources",
+                "semantic_branch_weights",
+            ):
+                if key in semantic_payload[chunk_id]:
+                    item[key] = semantic_payload[chunk_id][key]
         item["row"] = (
             int(semantic_payload[chunk_id]["row"])
             if chunk_id in semantic_payload
@@ -772,6 +864,7 @@ def _build_policy(
         semantic=semantic,
         alias_index=alias_index,
         edges=edges,
+        force=force_routing,
     )
 
 
@@ -783,6 +876,7 @@ def retrieve(
     status: str | None,
     expand_links: bool,
     lexical_question: str | None = None,
+    contextual_question: str | None = None,
     vigencia: str | None = None,
     tags: list[str] | None = None,
     forced_policy: RetrievalPolicy | None = None,
@@ -793,28 +887,72 @@ def retrieve(
     requested_tags = normalize_tag_filter(tags)
     candidate_limit = max(20, top_k * settings.hybrid_candidate_multiplier)
 
-    query_vector = embed_question(question)
-    semantic = _semantic_candidates(
-        query_vector,
+    current_query_vector = embed_question(question)
+    current_semantic = _semantic_candidates(
+        current_query_vector,
         limit=candidate_limit,
         min_similarity=min_similarity,
         status=requested_status,
         vigencia=requested_vigencia,
         tags=requested_tags,
     )
+    current_semantic = apply_relative_cutoff(current_semantic)
+
+    contextual_text = (contextual_question or "").strip()
+    contextual_query_vector: np.ndarray | None = None
+    contextual_semantic: list[dict[str, Any]] = []
+    if contextual_text and contextual_text != question.strip():
+        contextual_query_vector = embed_question(contextual_text)
+        contextual_semantic = _semantic_candidates(
+            contextual_query_vector,
+            limit=candidate_limit,
+            min_similarity=min_similarity,
+            status=requested_status,
+            vigencia=requested_vigencia,
+            tags=requested_tags,
+        )
+        # Cada consulta se recorta respecto a su propio mejor coseno. Así
+        # una versión contextual más larga no hereda la escala de la corta.
+        contextual_semantic = apply_relative_cutoff(contextual_semantic)
+
+    semantic = merge_semantic_candidates(
+        current_semantic,
+        contextual_semantic,
+    )
+    semantic_question = contextual_text or question
+    semantic_query_vector = (
+        contextual_query_vector
+        if contextual_query_vector is not None
+        else current_query_vector
+    )
 
     # Regla de abstención: sin evidencia semántica no se responde. FTS5 y
     # el grafo complementan y reordenan, pero no pueden anularla. Corre
     # antes de enrutar: el router nunca ve una consulta sin evidencia.
     if not semantic:
+        # No se conserva el diagnóstico posterior de una consulta anterior:
+        # además de ser engañoso en la API de estado, impediría distinguir
+        # durante la calibración los casos detenidos por el umbral semántico.
+        last_abstention_outcome.clear()
+        last_abstention_outcome.update(
+            {
+                "stage": "pre_retrieval",
+                "should_abstain": True,
+                "enabled": True,
+                "combined_score": None,
+                "threshold": min_similarity,
+                "signals": {},
+                "reasons": (
+                    "ningún fragmento superó el umbral semántico",
+                ),
+            }
+        )
         return []
-
-    semantic = apply_relative_cutoff(semantic)
 
     # La política es un valor local: dos consultas concurrentes con
     # políticas distintas no se pisan porque nada global se muta aquí.
     policy = _build_policy(
-        question,
+        semantic_question,
         semantic,
         forced_policy=forced_policy,
         force_routing=force_routing,
@@ -834,7 +972,7 @@ def retrieve(
     graph = (
         graph_candidates(
             semantic,
-            query_vector,
+            semantic_query_vector,
             use_graph=policy.use_graph,
             seed_documents=policy.graph_seed_documents,
             max_hops=policy.graph_max_hops,
@@ -876,7 +1014,7 @@ def retrieve(
     # El reordenador actúa sobre los candidatos fusionados y antes de la
     # diversificación, para que MMR y el tope por documento se apliquen
     # sobre el orden ya corregido.
-    outcome = rerank(question, fused)
+    outcome = rerank(semantic_question, fused)
     fused = outcome.items
     last_rerank_outcome.clear()
     last_rerank_outcome.update(outcome.as_dict())
@@ -894,7 +1032,9 @@ def retrieve(
     # puede vaciar `selected` aunque la abstención previa ya haya pasado.
     abstention_decision = evaluate_posterior_abstention(selected, top_k=top_k)
     last_abstention_outcome.clear()
-    last_abstention_outcome.update(abstention_decision.as_dict())
+    last_abstention_outcome.update(
+        {"stage": "post_fusion", **abstention_decision.as_dict()}
+    )
     if abstention_decision.should_abstain:
         return []
 

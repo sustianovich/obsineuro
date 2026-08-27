@@ -207,6 +207,90 @@ def test_estado_expone_configuracion_del_router(monkeypatch):
     )
 
 
+def test_abstencion_previa_reemplaza_telemetria_posterior_obsoleta(monkeypatch):
+    import app.rag.retrieval as retrieval
+
+    _base_monkeypatches(monkeypatch, retrieval)
+    monkeypatch.setattr(
+        retrieval,
+        "_semantic_candidates",
+        lambda *args, **kwargs: [],
+    )
+    retrieval.last_abstention_outcome.clear()
+    retrieval.last_abstention_outcome.update(
+        {"stage": "post_fusion", "combined_score": 0.99}
+    )
+
+    hits = retrieval.retrieve(
+        "pregunta sin evidencia semántica",
+        top_k=5,
+        min_similarity=0.3,
+        status=None,
+        expand_links=False,
+    )
+
+    assert hits == []
+    assert retrieval.last_abstention_outcome["stage"] == "pre_retrieval"
+    assert retrieval.last_abstention_outcome["should_abstain"] is True
+    assert retrieval.last_abstention_outcome["combined_score"] is None
+
+
+def test_consulta_contextual_rescata_una_pregunta_actual_sin_evidencia(
+    monkeypatch,
+):
+    import app.rag.retrieval as retrieval
+
+    monkeypatch.setattr(settings, "query_routing_enabled", False)
+    monkeypatch.setattr(settings, "hybrid_search_enabled", False)
+    monkeypatch.setattr(settings, "rerank_enabled", False)
+    monkeypatch.setattr(settings, "mmr_enabled", False)
+    embedded_questions: list[str] = []
+
+    def fake_embed(question):
+        embedded_questions.append(question)
+        return (
+            np.array([1.0, 0.0], dtype=np.float32)
+            if question == "pregunta actual"
+            else np.array([0.0, 1.0], dtype=np.float32)
+        )
+
+    def fake_semantic(query_vector, **kwargs):
+        if float(query_vector[0]) == 1.0:
+            return []
+        return [
+            {
+                "chunk_id": 2,
+                "document_id": 2,
+                "row": 1,
+                "semantic_score": 0.88,
+            }
+        ]
+
+    monkeypatch.setattr(retrieval, "embed_question", fake_embed)
+    monkeypatch.setattr(retrieval, "_semantic_candidates", fake_semantic)
+    monkeypatch.setattr(
+        retrieval,
+        "hydrate_chunks",
+        lambda ids: {chunk_id: hydrated_chunk(chunk_id) for chunk_id in ids},
+    )
+
+    hits = retrieval.retrieve(
+        "pregunta actual",
+        contextual_question="pregunta actual con el tema anterior",
+        top_k=2,
+        min_similarity=0.3,
+        status=None,
+        expand_links=False,
+    )
+
+    assert embedded_questions == [
+        "pregunta actual",
+        "pregunta actual con el tema anterior",
+    ]
+    assert [hit["chunk_id"] for hit in hits] == [2]
+    assert hits[0]["semantic_sources"] == ["contextual"]
+
+
 # ----------------------------------------------------------------------
 # 6 y 7 (a nivel de retrieve completo): sin mutación global y sin
 # interferencia entre políticas concurrentes.

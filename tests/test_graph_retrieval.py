@@ -89,6 +89,38 @@ def test_extrae_seccion_alias_y_enlace_roto_sin_perder_el_destino():
     ]
 
 
+def test_extrae_alias_con_separador_escapado_en_tabla_markdown():
+    links = extract_wiki_links(
+        "| Área | [[Hospitalizacion\\|hospitalización]] |"
+    )
+
+    assert links == [
+        {
+            "target": "Hospitalizacion",
+            "section": "",
+            "alias": "hospitalización",
+            "embedded": False,
+        }
+    ]
+
+
+def test_ignora_wikilinks_documentados_dentro_de_codigo_markdown():
+    links = extract_wiki_links(
+        "Usa `[[Ejemplo]]` como sintaxis.\n"
+        "```markdown\n[[Tambien ejemplo]]\n```\n"
+        "El enlace real es [[Destino]]."
+    )
+
+    assert links == [
+        {
+            "target": "Destino",
+            "section": "",
+            "alias": "",
+            "embedded": False,
+        }
+    ]
+
+
 def test_alta_sustitucion_y_baja_recalculan_aliases_y_backlinks(graph_db):
     from app.db import delete_documents_not_in, get_connection
 

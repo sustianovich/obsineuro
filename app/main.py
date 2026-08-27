@@ -481,12 +481,17 @@ def _prepare_query(payload: QueryRequest) -> dict[str, Any]:
     )
 
     hits = retrieve(
-        retrieval_question,
+        payload.question,
         top_k=payload.top_k,
         min_similarity=settings.min_similarity,
         status=payload.status,
         expand_links=payload.expand_links,
         lexical_question=payload.question,
+        contextual_question=(
+            retrieval_question
+            if retrieval_question.strip() != payload.question.strip()
+            else None
+        ),
         vigencia=payload.vigencia,
         tags=payload.tags,
     )
@@ -497,6 +502,28 @@ def _prepare_query(payload: QueryRequest) -> dict[str, Any]:
         "agent_settings": agent_settings,
         "hits": hits,
     }
+
+
+def _refine_question_with_feedback(
+    original_question: str,
+    feedback: str,
+) -> str:
+    """Refina la pregunta usando el feedback del usuario.
+
+    Añade el feedback al contexto de la pregunta para guiar la siguiente
+    iteración del modelo. El cliente (frontend) decidirá cuándo lanzar
+    una nueva iteración basándose en la respuesta que se le devuelva.
+    """
+    return f"""{original_question}
+
+--- Feedback del usuario ---
+{feedback}
+
+--- Instrucción para la próxima iteración ---
+Por favor, proporcione una respuesta que aborde las preocupaciones arriba
+mencionadas, amplíe la información donde falte y mantenga todas las
+referencias documentales. Si la evidencia documental no cubre algún punto
+del feedback, indíquelo claramente."""
 
 
 def _build_sources(hits: list[dict[str, Any]]) -> list[SourceItem]:
@@ -535,6 +562,12 @@ def _build_sources(hits: list[dict[str, Any]]) -> list[SourceItem]:
         )
         for index, hit in enumerate(hits, start=1)
     ]
+
+
+def _agent_abstained(metrics: dict[str, Any]) -> bool:
+    """Indica que el verificador cerró el turno sin invocar al redactor."""
+    writer = metrics.get("writer") or {}
+    return writer.get("status") == "skipped_insufficient_evidence"
 
 
 def _persist_turn(
@@ -666,32 +699,122 @@ def query_documents(payload: QueryRequest) -> QueryResponse:
         answer, citation_report, citation_warning = validate_answer(
             agent_result.answer,
             len(sources),
+            abstained=_agent_abstained(agent_result.metrics),
         )
-        saved = _persist_turn(
-            payload,
-            context,
-            answer,
-            sources,
-            agent_result.metrics,
-        )
-        agent_metrics = _public_payload(dict(agent_result.metrics))
-        agent_metrics["warning"] = " ".join(
-            part
-            for part in (agent_result.warning, citation_warning)
-            if part
-        ) or None
-        return QueryResponse(
-            answer=answer,
-            sources=sources,
-            conversation_id=saved["conversation_id"],
-            project_id=context["project_id"],
-            turn_id=saved["turn_id"],
-            chat_model=settings.chat_model,
-            memory=saved["memory"],
-            project_memory=saved["project_memory"],
-            agents=agent_metrics,
-            citations=citation_report.as_dict(),
-        )
+
+        # --- LÓGICA DE ITERACIÓN ---
+        # Si hay feedback del usuario o se solicita una iteración,
+        # usamos el feedback para refinar la pregunta y volvemos a ejecutar.
+        # Si iteration=0 y no hay feedback, es la primera pasada: guardamos y devolvemos.
+        max_iterations = 5
+        should_iterate = payload.iteration > 0 or bool(payload.iteration_feedback.strip())
+
+        if should_iterate and payload.iteration < max_iterations:
+            # Refina la pregunta usando el feedback del usuario
+            refined_question = _refine_question_with_feedback(
+                payload.question,
+                payload.iteration_feedback,
+            )
+            # Crea un payload con la pregunta refinada para la persistency
+            refined_payload = QueryRequest(
+                question=refined_question,
+                top_k=payload.top_k,
+                status=payload.status,
+                expand_links=payload.expand_links,
+                vigencia=payload.vigencia,
+                tags=payload.tags,
+                iteration=payload.iteration + 1,
+                iteration_feedback="",
+            )
+            # Ejecuta una nueva iteración con la pregunta refinada
+            context2 = _prepare_query(refined_payload)
+            agent_settings2 = context2["agent_settings"]
+            agent_result2 = run_rag_agent_pipeline(
+                refined_question,
+                context2["hits"],
+                conversation_memory=context2["memory_context"],
+                project_memory=context2["project_memory_context"],
+                verification_enabled=bool(
+                    agent_settings2["verification_enabled"]
+                ),
+                verifier_context_tokens=int(
+                    agent_settings2["verifier_context_tokens"]
+                ),
+                writer_context_tokens=int(
+                    agent_settings2["writer_context_tokens"]
+                ),
+            )
+            sources2 = _build_sources(context2["hits"])
+            answer2, citation_report2, citation_warning2 = validate_answer(
+                agent_result2.answer,
+                len(sources2),
+                abstained=_agent_abstained(agent_result2.metrics),
+            )
+            saved2 = _persist_turn(
+                refined_payload,
+                context2,
+                answer2,
+                sources2,
+                agent_result2.metrics,
+            )
+            agent_metrics2 = _public_payload(dict(agent_result2.metrics))
+            agent_metrics2["warning"] = " ".join(
+                part
+                for part in (agent_result2.warning, citation_warning2)
+                if part
+            ) or None
+            agent_metrics2["iteration"] = refined_payload.iteration
+            agent_metrics2["iteration_available"] = (
+                refined_payload.iteration < max_iterations
+            )
+            agent_metrics2["request_feedback"] = False
+            return QueryResponse(
+                answer=answer2,
+                sources=sources2,
+                conversation_id=saved2["conversation_id"],
+                project_id=context2["project_id"],
+                turn_id=saved2["turn_id"],
+                chat_model=settings.chat_model,
+                memory=saved2["memory"],
+                project_memory=saved2["project_memory"],
+                agents=agent_metrics2,
+                citations=citation_report2.as_dict(),
+            )
+        else:
+            # Primera pasada o se alcanzó el máximo de iteraciones: guardar y devolver
+            saved = _persist_turn(
+                payload,
+                context,
+                answer,
+                sources,
+                agent_result.metrics,
+            )
+            agent_metrics = _public_payload(dict(agent_result.metrics))
+            agent_metrics["warning"] = " ".join(
+                part
+                for part in (agent_result.warning, citation_warning)
+                if part
+            ) or None
+            # Añadimos metadatos de iteración para la UI
+            agent_metrics["iteration"] = payload.iteration
+            agent_metrics["iteration_available"] = (
+                payload.iteration < max_iterations and not should_iterate
+            )
+            agent_metrics["request_feedback"] = (
+                not should_iterate and payload.iteration == 0
+            )
+            return QueryResponse(
+                answer=answer,
+                sources=sources,
+                conversation_id=saved["conversation_id"],
+                project_id=context["project_id"],
+                turn_id=saved["turn_id"],
+                chat_model=settings.chat_model,
+                memory=saved["memory"],
+                project_memory=saved["project_memory"],
+                agents=agent_metrics,
+                citations=citation_report.as_dict(),
+            )
     except HTTPException:
         raise
     except Exception as exc:
@@ -772,6 +895,7 @@ def _query_event_stream(payload: QueryRequest) -> Iterator[str]:
     answer, citation_report, citation_warning = validate_answer(
         answer,
         len(sources),
+        abstained=_agent_abstained(metrics),
     )
     if citation_warning:
         warning = " ".join(

@@ -10,7 +10,10 @@ import app.main as main
 from app.config import settings
 from app.db import get_conversation, init_db, save_conversation_turn
 from app.rag import ollama_client
-from app.rag.memory import build_conversation_context_overview
+from app.rag.memory import (
+    build_conversation_context_overview,
+    build_memory_aware_retrieval_query,
+)
 
 
 LOCAL_HEADERS = {
@@ -18,6 +21,85 @@ LOCAL_HEADERS = {
     "origin": "http://127.0.0.1:8000",
     "sec-fetch-site": "same-origin",
 }
+
+
+# ----------------------------------------------------------------------
+# La versión contextual se construye siempre que haya memoria. `main` la
+# entrega como una segunda consulta semántica, sin sustituir a la pregunta
+# actual ni contaminar su rama léxica.
+# ----------------------------------------------------------------------
+def test_memoria_construye_una_consulta_contextual_separada():
+    question = "Exploraciones habituales\nEndocopia digestia"
+    memory = "El turno anterior trataba sobre farmacia hospitalaria."
+
+    contextual = build_memory_aware_retrieval_query(question, memory)
+
+    assert contextual != question
+    assert contextual.count(question) == 2
+    assert memory in contextual
+
+
+def test_sin_memoria_no_se_crea_una_segunda_consulta():
+    question = "¿Cuáles son sus contraindicaciones?"
+    assert build_memory_aware_retrieval_query(question, "") == question
+
+
+def test_consulta_contextual_conserva_la_memoria_mas_reciente():
+    old_context = (
+        "TURNOS RECIENTES\n"
+        "USUARIO\nPregunta antigua sobre farmacia.\n"
+        "ASISTENTE\n" + ("farmacia " * 500) + "\n\n"
+    )
+    recent_context = (
+        "USUARIO\nPregunta sobre una colonoscopia.\n"
+        "ASISTENTE\nNo se encontró documentación suficientemente relacionada.\n\n"
+        "USUARIO\n¿Y la preparación?\n"
+        "ASISTENTE\nDebe seguir las instrucciones documentadas."
+    )
+
+    contextual = build_memory_aware_retrieval_query(
+        "¿Y cuáles son sus riesgos?",
+        old_context + recent_context,
+    )
+
+    assert "Pregunta sobre una colonoscopia" in contextual
+    assert "No se encontró documentación" not in contextual
+    assert "Debe seguir las instrucciones documentadas" in contextual
+    assert "Pregunta antigua sobre farmacia" not in contextual
+    assert len(contextual) < len(old_context + recent_context)
+
+
+def test_prepare_query_envia_pregunta_actual_y_contextual_por_separado(
+    monkeypatch,
+):
+    captured: dict = {}
+
+    monkeypatch.setattr(main, "_resolve_project", lambda payload: "default")
+    monkeypatch.setattr(main, "get_memory_context", lambda cid: "Tema previo")
+    monkeypatch.setattr(main, "get_project_memory_context", lambda pid: "")
+    monkeypatch.setattr(
+        main,
+        "get_project_agent_settings",
+        lambda pid: main._default_agent_settings(),
+    )
+
+    def fake_retrieve(question, **kwargs):
+        captured["question"] = question
+        captured.update(kwargs)
+        return []
+
+    monkeypatch.setattr(main, "retrieve", fake_retrieve)
+    payload = main.QueryRequest(
+        question="¿Y sus riesgos?",
+        conversation_id="conversation-id",
+    )
+
+    main._prepare_query(payload)
+
+    assert captured["question"] == payload.question
+    assert captured["lexical_question"] == payload.question
+    assert captured["contextual_question"] != payload.question
+    assert "Tema previo" in captured["contextual_question"]
 
 
 @pytest.fixture()

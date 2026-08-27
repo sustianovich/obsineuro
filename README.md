@@ -143,7 +143,7 @@ El script:
 1. crea `.venv` si no existe;
 2. instala o actualiza las dependencias;
 3. crea `.env` a partir de `.env.example` la primera vez, si ese archivo está
-   presente;
+   presente; si no, abre un `.env` nuevo para configurarlo manualmente;
 4. comprueba el comando y el servicio de Ollama;
 5. avisa si falta algún modelo, sin descargarlo;
 6. abre `http://127.0.0.1:8000`.
@@ -156,9 +156,10 @@ agentes ni métricas de contexto.
 Si Ollama no está disponible, la interfaz web sigue arrancando y muestra el
 problema en el panel de estado.
 
-En esta copia local no aparece `.env.example`. Si arrancas desde una copia sin
-`.env`, crea el archivo manualmente con el bloque de configuración de esta
-sección antes de ejecutar `iniciar_windows.bat`.
+Esta copia local no incluye `.env.example`. En una instalación inicial, el
+script abrirá un `.env` nuevo: añade al menos `OBSIDIAN_VAULT_PATH` con la ruta
+de tu vault (y guarda el archivo) antes de continuar. El bloque completo de
+valores predeterminados está en la sección «Configuración».
 
 ### Instalación manual
 
@@ -167,7 +168,7 @@ py -3.12 -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 pip install -r requirements.txt
-Copy-Item .env.example .env   # si existe en tu copia
+if (Test-Path .env.example) { Copy-Item .env.example .env }
 notepad .env
 python -m app.main
 ```
@@ -189,7 +190,10 @@ OLLAMA_EMBEDDING_MODEL=nomic-embed-text
 OLLAMA_TIMEOUT_SECONDS=180
 
 OBSIDIAN_VAULT_PATH=./vault_demo
-RAG_DATABASE_PATH=./data/rag_index.sqlite3
+# RAG_DATABASE_PATH=./data/rag_index.sqlite3
+# Opcional: fuerza una única base compartida entre vaults. Si se omite
+# (recomendado), cada vault usa su propia base en
+# data/vaults/<slug>/rag_index.sqlite3.
 RAG_TOP_K=6
 RAG_MIN_SIMILARITY=0.30
 RAG_MIN_RELATIVE_SCORE=0.62
@@ -322,9 +326,14 @@ los valores usados por el modo plano.
   ruta.
 
 La consulta FTS5 se construye con términos normalizados y no interpola sintaxis
-introducida por el usuario. En conversaciones con memoria, el embedding utiliza
-la consulta enriquecida para resolver referencias como «eso» o «lo anterior»,
-pero FTS5 sólo utiliza la pregunta actual para no contaminar sus coincidencias
+introducida por el usuario. En conversaciones con memoria se ejecutan dos
+búsquedas semánticas independientes: una con la pregunta actual intacta y otra
+con la versión enriquecida por el historial para resolver referencias como
+«eso» o «lo anterior». Sus rankings se fusionan antes de combinarse con
+FTS5; aparecer en ambas ramas aporta más evidencia. Cuando el mejor coseno de
+una rama supera claramente al de la otra, la rama débil conserva medio peso;
+sin esa diferencia, ambas pesan lo mismo y en empates prevalece la pregunta
+actual. FTS5 sólo utiliza el texto actual para no contaminar sus coincidencias
 con palabras del resumen.
 
 Los candidatos se combinan mediante RRF. Los valores predeterminados dan un
@@ -437,11 +446,33 @@ positivos y negativos reales para ajustar sus pesos:
   esperado, el sistema no abstiene por eso: es un fallback seguro, no
   evidencia de insuficiencia.
 
-`scripts/calibrate_threshold.py` ahora soporta costes distintos para cada tipo
-de error (`--cost-fp` para responder debiendo abstenerse, `--cost-fn` para
-abstenerse debiendo responder) y reporta balanced accuracy, precisión/recall
-de abstención y una tabla de cobertura frente a exactitud por umbral, en vez
-de minimizar sólo el recuento bruto de errores.
+Los dos umbrales se calibran por separado:
+
+- `scripts/calibrate_threshold.py` ajusta exclusivamente la abstención previa
+  `RAG_MIN_SIMILARITY` a partir del mejor coseno semántico.
+- `scripts/calibrate_posterior_threshold.py` ejecuta la ruta real de fusión,
+  reordenación y MMR, recoge el `combined_score` posterior con umbral `0.00`
+  y recorre los candidatos en memoria. Sólo recomienda un umbral con cero
+  falsos negativos que además conserve el recall documental y el MRR mínimos:
+
+```bash
+python -m scripts.calibrate_posterior_threshold \
+  --dataset evaluations/pdpcm_questions.json \
+  --dataset evaluations/pdpcm_abstention_negatives.json \
+  --min-class-size 10 --min-document-recall 1.0 --min-mrr 0.938 --detalle
+```
+
+El dataset debe corresponder al vault indexado y contener preguntas
+respondibles y no respondibles que superen la abstención semántica previa.
+La opción `--dataset` puede repetirse para mantener separados los casos
+positivos y negativos. Los negativos PDPCM incluidos son un conjunto inicial
+que requiere revisión de la persona responsable del contenido clínico antes
+de convertir su resultado en configuración de producción.
+Si falta una de esas clases o las puertas de calidad son incompatibles, el
+script termina sin inventar una recomendación. Para recoger telemetría antes
+de disponer de ese conjunto, `RAG_POSTERIOR_ABSTENTION=true` junto con
+`RAG_POSTERIOR_ABSTENTION_THRESHOLD=0.00` funciona como modo de observación:
+calcula y expone las señales, pero no rechaza recuperaciones no vacías.
 
 ### Reordenador ONNX local
 
@@ -889,7 +920,7 @@ métricas históricas, que el endpoint de contexto de conversación diferencia
 historial almacenado de historial activo y que nunca suma porcentajes de
 turnos distintos.
 
-En el árbol actual hay 217 pruebas Python. `tests/test_sse_parser.mjs` añade 7
+En el árbol actual hay 211 pruebas Python. `tests/test_sse_parser.mjs` añade 7
 casos del parser SSE (incluida la telemetría de contexto) y
 `tests/test_ui_dom.mjs` carga la interfaz en un DOM real y comprueba también
 el indicador de contexto, sus diálogos y que la interfaz no use `innerHTML`;
@@ -987,8 +1018,14 @@ saltos activos.
   Ollama exponga `context_length` en sus metadatos; si el modelo no está
   instalado o Ollama no responde, se usa el límite prudente de 32K marcado
   como no verificado, que puede ser menor que la capacidad real del modelo.
-- Los proyectos agrupan conversaciones, pero no crean índices ni vaults
-  distintos: todos consultan el vault activo.
+- Cada vault tiene su propia base de datos (índice, proyectos y
+  conversaciones), guardada en `data/vaults/<slug>/rag_index.sqlite3` y
+  creada automáticamente al seleccionarlo. Los proyectos agrupan
+  conversaciones dentro de ese vault; cambiar de vault no borra nada, solo
+  aísla lo que se ve: si vuelves a un vault ya indexado, su índice y sus
+  proyectos reaparecen tal como los dejaste. Para forzar una base de datos
+  única y compartida entre vaults (comportamiento anterior), define
+  `RAG_DATABASE_PATH` explícitamente en `.env`.
 - Esta copia no contiene `.env.example`, aunque el script de Windows lo
   referencia para una primera instalación sin `.env`.
 - La aplicación no debe exponerse directamente a una red ni utilizarse con
