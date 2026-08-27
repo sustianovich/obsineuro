@@ -455,25 +455,6 @@ Los dos umbrales se calibran por separado:
   y recorre los candidatos en memoria. Sólo recomienda un umbral con cero
   falsos negativos que además conserve el recall documental y el MRR mínimos:
 
-```bash
-python -m scripts.calibrate_posterior_threshold \
-  --dataset evaluations/pdpcm_questions.json \
-  --dataset evaluations/pdpcm_abstention_negatives.json \
-  --min-class-size 10 --min-document-recall 1.0 --min-mrr 0.938 --detalle
-```
-
-El dataset debe corresponder al vault indexado y contener preguntas
-respondibles y no respondibles que superen la abstención semántica previa.
-La opción `--dataset` puede repetirse para mantener separados los casos
-positivos y negativos. Los negativos PDPCM incluidos son un conjunto inicial
-que requiere revisión de la persona responsable del contenido clínico antes
-de convertir su resultado en configuración de producción.
-Si falta una de esas clases o las puertas de calidad son incompatibles, el
-script termina sin inventar una recomendación. Para recoger telemetría antes
-de disponer de ese conjunto, `RAG_POSTERIOR_ABSTENTION=true` junto con
-`RAG_POSTERIOR_ABSTENTION_THRESHOLD=0.00` funciona como modo de observación:
-calcula y expone las señales, pero no rechaza recuperaciones no vacías.
-
 ### Reordenador ONNX local
 
 El backend predeterminado es `onnx`: usa `bge-reranker-v2-m3` INT8 con
@@ -775,7 +756,7 @@ version: "1.2"
 fecha_vigencia: 2026-01-01
 fecha_derogacion:
 fecha_revision: 2026-07-15
-fuente: Protocolo PDPCM
+fuente: Protocolo
 ---
 ```
 
@@ -939,18 +920,6 @@ Para evaluar también el contenido de las respuestas locales:
 ```powershell
 python -m app.rag.evaluation --generate-answers
 ```
-
-El conjunto dorado de demostracion esta en `evaluations/questions.json`. Para
-evaluar el vault PDPCM indexado se incluye un conjunto inicial separado:
-
-```powershell
-python -m app.rag.evaluation --dataset evaluations/pdpcm_questions.json
-```
-
-La comparacion sobre 16 casos del vault PDPCM obtuvo 100% de recuperacion
-exacta, 100% de recall y MRR 0,938 sin el antiguo agente de scope. Al activarlo
-no vario ninguna metrica y anadio 0,53 s de media por pregunta tras
-calentamiento; por ese motivo se retiro de la aplicacion.
 
 Los informes se guardan en `evaluations/reports/latest.json` y `latest.md`. La
 segunda modalidad necesita Ollama y el modelo de chat instalados, pero no
