@@ -3,7 +3,6 @@ from __future__ import annotations
 import pytest
 
 from app.config import settings
-from app.rag.evaluation import load_dataset
 from scripts.calibrate_posterior_threshold import (
     PosteriorObservation,
     calibrate,
@@ -164,13 +163,3 @@ def test_recogida_fuerza_modo_observacion_y_restaura_settings(monkeypatch):
     assert observations[0].document_recall_when_answered == 1.0
     assert settings.posterior_abstention_enabled is original_enabled
     assert settings.posterior_abstention_threshold == original_threshold
-
-
-def test_dataset_pdpcm_de_negativos_es_valido_y_solo_contiene_abstenciones():
-    cases = load_dataset(
-        settings.base_dir / "evaluations" / "pdpcm_abstention_negatives.json"
-    )
-
-    assert len(cases) == 12
-    assert all(case.expect_abstention for case in cases)
-    assert len({case.id for case in cases}) == len(cases)

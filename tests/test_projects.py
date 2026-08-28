@@ -34,7 +34,7 @@ def temporary_database(tmp_path: Path):
 def test_delete_project_moves_conversations_to_default(
     temporary_database,
 ):
-    project = create_project("PDPCM pruebas")
+    project = create_project("Proyecto de pruebas")
     conversation_id, _ = save_conversation_turn(
         conversation_id=None,
         project_id=project["id"],
@@ -61,7 +61,7 @@ def test_delete_project_moves_conversations_to_default(
     assert result == {
         "deleted": True,
         "project_id": project["id"],
-        "project_name": "PDPCM pruebas",
+        "project_name": "Proyecto de pruebas",
         "moved_conversations": 1,
         "fallback_project_id": DEFAULT_PROJECT_ID,
     }

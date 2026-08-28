@@ -901,7 +901,7 @@ métricas históricas, que el endpoint de contexto de conversación diferencia
 historial almacenado de historial activo y que nunca suma porcentajes de
 turnos distintos.
 
-En el árbol actual hay 211 pruebas Python. `tests/test_sse_parser.mjs` añade 7
+En el árbol actual hay 242 pruebas Python. `tests/test_sse_parser.mjs` añade 7
 casos del parser SSE (incluida la telemetría de contexto) y
 `tests/test_ui_dom.mjs` carga la interfaz en un DOM real y comprueba también
 el indicador de contexto, sus diálogos y que la interfaz no use `innerHTML`;
@@ -936,11 +936,9 @@ preguntas con:
 python -m app.rag.evaluation --compare-strategies
 ```
 
-El informe de referencia está en
-`evaluations/reports/graph_comparison.md` y separa preguntas factuales de
-relacionales, comparando el grafo apagado y encendido. Ese informe fue generado
-el 29/07/2026 sobre un índice anterior; la densidad del índice configurado se
-debe leer de la comprobación más reciente siguiente.
+La ejecución genera un informe que separa preguntas factuales de relacionales
+y compara el grafo apagado y encendido. Conviene conservar esos artefactos
+fuera del repositorio cuando proceden de un vault real.
 
 ### Densidad del grafo del índice configurado
 
@@ -995,8 +993,8 @@ saltos activos.
   proyectos reaparecen tal como los dejaste. Para forzar una base de datos
   única y compartida entre vaults (comportamiento anterior), define
   `RAG_DATABASE_PATH` explícitamente en `.env`.
-- Esta copia no contiene `.env.example`, aunque el script de Windows lo
-  referencia para una primera instalación sin `.env`.
+- `.env.example` contiene la configuración de referencia que el script de
+  Windows copia durante una primera instalación sin `.env`.
 - La aplicación no debe exponerse directamente a una red ni utilizarse con
   datos sanitarios identificables sin una revisión completa de seguridad,
   protección de datos, validación clínica y control de accesos.

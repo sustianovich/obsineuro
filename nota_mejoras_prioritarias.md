@@ -14,40 +14,26 @@ que parece en proyectos de un solo desarrollador.
 Lo que sigue no son problemas de arquitectura, sino tres frentes concretos
 que ya están identificados en el propio repo pero no cerrados.
 
-## 1. Cerrar el ciclo de trabajo abierto antes de empezar otro
+## 1. Mantener CI independiente de datasets retirados
 
-El árbol de trabajo tiene 20 archivos modificados (863 inserciones / 115
-borrados) y 12 archivos nuevos sin trackear —el cambio de base de datos por
-vault, el vault de ejemplo hospitalario, sus datasets y el script de
-calibración posterior—, todo sin commitear.
-
-Al ejecutar la suite (`python -m pytest tests -q`) hay un fallo real, no de
-entorno:
-
-```
-FAILED tests/test_hospital_evaluation_dataset.py::test_hospital_dataset_only_references_existing_notes
-```
-
-El dataset `hospital_questions.json`/`hospital_typos_questions.json`
-referencia rutas que no coinciden con los archivos reales del vault de
-ejemplo (p. ej. `10-areas-asistenciales/bloque quirurgico.md`). Antes de
-seguir construyendo evaluaciones sobre ese vault conviene arreglarlo y partir
-el commit grande en unidades lógicas (aislamiento de BD por vault por un
-lado, dataset y evaluación hospitalaria por otro) en vez de un único commit
-mixto.
+Los conjuntos retirados no deben seguir siendo dependencias implícitas de
+pruebas, scripts o documentación. CI usa `evaluations/ci_questions.json`, un
+conjunto sintético ligado al vault generado por `scripts/build_demo_vault.py`.
+Las evaluaciones adicionales se pasan explícitamente con `--dataset` y pueden
+mantenerse fuera del repositorio cuando contienen material de un dominio real.
 
 ## 2. Investigar *por qué* el grafo y el router bajan el ranking, no volver a medirlo
 
-Dos evaluaciones independientes —PDPCM (16 preguntas) y ahora el vault
+Dos evaluaciones independientes —un conjunto anterior (16 preguntas) y ahora el vault
 hospitalario (21 preguntas)— llegan a la misma conclusión cuantitativa:
 activar el grafo mejora el recall pero hunde el orden de los resultados.
-En PDPCM el MRR cae de 0,938 a 0,474 con el grafo siempre activo; en el
+En el conjunto anterior el MRR cae de 0,938 a 0,474 con el grafo siempre activo; en el
 hospital, de 0,921 a 0,655 y el nDCG de 90,1% a 75,2%. El router real
 tampoco compensa (acierta el tipo de consulta en sólo 7 de 21 casos).
 
 La decisión correcta hoy es mantenerlos apagados, y así está configurado.
-Pero el propio informe (`evaluations/reports/hospital/summary.md`) señala el
-siguiente paso sin ejecutarlo todavía: *"Investigar la pérdida de documentos
+El diagnóstico histórico señala el siguiente paso sin ejecutarlo todavía:
+*"Investigar la pérdida de documentos
 en preguntas multisección y la duplicación de fragmentos antes de ajustar
 pesos del grafo."* Con el mismo patrón repitiéndose en dos vaults distintos,
 vale más diagnosticar el mecanismo (fragmentos duplicados compitiendo en
@@ -60,7 +46,7 @@ El vault hospitalario sólo tiene 2 preguntas fuera de dominio, y el propio
 resumen lo marca explícitamente: *"Con sólo dos negativos no se debe
 convertir ese valor en configuración."* El estudio de infraestructura de
 abstención posterior (`study_abstention_Infrastructure.md`) plantea la misma
-exigencia para PDPCM. `scripts/calibrate_posterior_threshold.py` ya impone
+exigencia para cualquier conjunto de validación. `scripts/calibrate_posterior_threshold.py` ya impone
 `--min-class-size 10` como puerta de calidad, así que ejecutarlo sobre
 cualquiera de estos datasets no puede pasar sus propias garantías.
 

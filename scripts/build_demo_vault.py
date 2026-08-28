@@ -1,4 +1,4 @@
-"""Genera el vault de evaluación del programa (dominio PDPCM).
+"""Genera un vault sintético para evaluar el programa.
 
 Contenido deliberadamente organizativo, no clínico: circuitos, plazos,
 responsables e indicadores. Incluye a propósito toda la sintaxis que el

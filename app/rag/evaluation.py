@@ -649,7 +649,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--dataset",
         type=Path,
-        default=settings.base_dir / "evaluations" / "questions.json",
+        default=settings.base_dir / "evaluations" / "ci_questions.json",
     )
     parser.add_argument(
         "--output-dir",

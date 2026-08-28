@@ -24,7 +24,7 @@ que una abstención de más, pero ambos costes son ajustables porque esa
 prioridad depende del dominio.
 
     python -m scripts.calibrate_threshold
-    python -m scripts.calibrate_threshold --dataset evaluations/questions.json
+    python -m scripts.calibrate_threshold --dataset evaluations/ci_questions.json
     python -m scripts.calibrate_threshold --cost-fp 5 --cost-fn 1 --detalle
 """
 
@@ -257,7 +257,7 @@ def main() -> int:
     parser.add_argument(
         "--dataset",
         type=Path,
-        default=ROOT / "evaluations" / "questions.json",
+        default=ROOT / "evaluations" / "ci_questions.json",
     )
     parser.add_argument(
         "--detalle",

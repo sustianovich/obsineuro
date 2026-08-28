@@ -1,10 +1,9 @@
 """Enrutador determinista de consultas: decide la política de recuperación.
 
-No hay llamada a LLM aquí. La ablación registrada en
-`evaluations/reports/graph_comparison.md` mostró que activar el grafo con
+No hay llamada a LLM aquí. Una ablación histórica mostró que activar el grafo con
 un peso fijo para *toda* consulta perjudica a las preguntas puramente
-factuales (MRR de 0,938 a 0,474 al subir el peso de 0 a 0,5 sobre las 16
-preguntas PDPCM, todas factuales). La respuesta correcta no es un peso de
+factuales (MRR de 0,938 a 0,474 al subir el peso de 0 a 0,5 sobre 16
+preguntas de referencia, todas factuales). La respuesta correcta no es un peso de
 compromiso, sino decidir por consulta si el grafo debe participar.
 
 El resultado de `route_query` es una `RetrievalPolicy`: un valor inmutable

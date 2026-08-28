@@ -24,7 +24,7 @@
       "id": "HOSP-T02-ospitalisacion-cama",
       "question": "¿Quién asigna la cama de ospitalisación y qué criterios usa?",
       "expected_paths": [
-        "10-areas-asistenciales/Hospitalizacion.md"
+        "10-areas-asistenciales/Hospitalización.md"
       ],
       "expected_terms": [
         [
@@ -71,7 +71,7 @@
       "id": "HOSP-T04-lavoratorio-valor-critico",
       "question": "¿Qué ase el lavoratorio con un balor crítico después de validarlo?",
       "expected_paths": [
-        "20-servicios-centrales/Laboratorio clinico.md"
+        "20-servicios-centrales/Laboratorio clínico.md"
       ],
       "expected_terms": [
         [
@@ -90,7 +90,7 @@
       "id": "HOSP-T05-diagnostico-imajen",
       "question": "¿Qué modalidaddes de imajen no emiten radiación ionisante?",
       "expected_paths": [
-        "20-servicios-centrales/Diagnostico por imagen.md"
+        "20-servicios-centrales/Diagnóstico por imagen.md"
       ],
       "expected_terms": [
         [
@@ -108,7 +108,7 @@
       "id": "HOSP-T06-biopcia-intraoperatoria",
       "question": "¿Cuánto tarda una biopcia intraoperatoria y para qué sirbe?",
       "expected_paths": [
-        "20-servicios-centrales/Anatomia patologica.md"
+        "20-servicios-centrales/Anatomía patológica.md"
       ],
       "expected_terms": [
         [
@@ -142,7 +142,7 @@
       "id": "HOSP-T08-estandares-integrasion",
       "question": "¿Qué estándares conectan las aplicasiones clínicas en el motor de integrasión?",
       "expected_paths": [
-        "30-servicios-de-soporte/Sistemas de informacion.md"
+        "30-servicios-de-soporte/Sistemas de información.md"
       ],
       "expected_terms": [
         [

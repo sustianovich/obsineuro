@@ -14,8 +14,8 @@ documental mínimo y MRR mínimo. Si faltan positivos/negativos que hayan
 superado la abstención semántica, no inventa una recomendación.
 
     python -m scripts.calibrate_posterior_threshold \
-      --dataset evaluations/pdpcm_questions.json \
-      --dataset evaluations/pdpcm_abstention_negatives.json --detalle
+      --dataset C:/ruta/casos_respondibles.json \
+      --dataset C:/ruta/casos_abstencion.json --detalle
 """
 
 from __future__ import annotations

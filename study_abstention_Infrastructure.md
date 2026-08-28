@@ -20,9 +20,9 @@ Read in this order:
 4. `app/rag/retrieval.py` — pre-retrieval and post-fusion integration
 5. `scripts/calibrate_threshold.py`
 6. `scripts/calibrate_posterior_threshold.py`
-7. `evaluations/questions.json`
-8. `evaluations/pdpcm_questions.json`
-9. `evaluations/pdpcm_abstention_negatives.json`
+7. `evaluations/ci_questions.json`
+8. Any additional answerable-question dataset provided for the study
+9. Any dedicated abstention dataset provided for the study
 10. Relevant abstention sections in `README.md`
 11. `app/rag/agents.py` — `SUFICIENCIA` and verifier abstention
 12. `app/rag/citations.py` and SSE/synchronous integration in `app/main.py`
@@ -40,13 +40,13 @@ Investigate:
   - `calibrate_threshold.py`, which calibrates `RAG_MIN_SIMILARITY`
   - `calibrate_posterior_threshold.py`, which calibrates the post-fusion score
 - Dataset counts and class imbalance
-- Whether PDPCM negatives have been reviewed by the domain owner
+- Whether negative cases have been reviewed by the relevant domain owner
 - Interaction with verifier `SUFICIENCIA`, writer skipping, citations, and SSE
 - Whether active configuration is observation-only or enforcing
 
 Safety requirements:
 A positive threshold may be recommended only if validation demonstrates:
-- Zero false abstentions on answerable PDPCM questions
+- Zero false abstentions on answerable validation questions
 - Document recall remains 100%
 - MRR remains at least 0.938
 - Abstention precision/recall are reported

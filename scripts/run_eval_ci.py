@@ -33,7 +33,7 @@ def main() -> int:
     parser.add_argument(
         "--dataset",
         type=Path,
-        default=ROOT / "evaluations" / "questions.json",
+        default=ROOT / "evaluations" / "ci_questions.json",
     )
     parser.add_argument(
         "--informe",
